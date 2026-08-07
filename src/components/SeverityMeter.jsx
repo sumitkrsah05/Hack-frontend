@@ -1,18 +1,29 @@
 import { useEffect, useState } from "react";
 import { SEVERITY, SEVERITY_ORDER } from "@/lib/api";
 
-export default function SeverityMeter({ counts = {} }) {
+// Horizontal bars for a {key: count} breakdown. Defaults to the Red Agent's
+// severity ladder; pass `order`/`palette` for other vocabularies (the Blue
+// Agent adds "unknown", and its priority buckets reuse the same shape).
+export default function SeverityMeter({
+  counts = {},
+  order = SEVERITY_ORDER,
+  palette = SEVERITY,
+  hideEmpty = false,
+}) {
   const [grow, setGrow] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setGrow(true), 40);
     return () => clearTimeout(t);
   }, []);
 
-  const entries = SEVERITY_ORDER.map((k) => ({
-    key: k,
-    ...SEVERITY[k],
-    value: counts[k] || 0,
-  }));
+  const entries = order
+    .map((k) => ({
+      key: k,
+      label: palette[k]?.label || String(k).toUpperCase(),
+      color: palette[k]?.color || "#7A8B8F",
+      value: counts[k] || 0,
+    }))
+    .filter((e) => !hideEmpty || e.value > 0);
   const total = entries.reduce((a, b) => a + b.value, 0);
 
   return (

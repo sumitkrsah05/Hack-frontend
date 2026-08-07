@@ -45,6 +45,28 @@ npm run dev
 
 Open the local URL printed by Vite.
 
+## Agent Backends
+
+The console drives two local services. Both base URLs are editable in the
+sidebar and persist in `localStorage`.
+
+| Service | Default base URL | Client |
+| --- | --- | --- |
+| Red Agent (scans) | `http://localhost:8000` | `src/lib/api.js` |
+| Blue Agent (analysis) | `http://localhost:8001` | `src/lib/blueApi.js` |
+
+Start the Blue Agent from its own checkout:
+
+```bash
+cd ../BlueAgent && source .venv/bin/activate && python serve_api.py
+```
+
+Blue routes: `/blue` (launch), `/blue/monitor/:jobId` (poll + progress),
+`/blue/report/:jobId` (analysis), `/blue/history` (server-backed job list).
+A completed red report can be handed over in one click from `/report/:jobId`.
+Analyses are background jobs — the UI submits, polls `/api/v1/analyses/{id}`
+every 2s, then fetches the report once `status === "completed"`.
+
 ## Use The Hosted Backend
 
 For frontend-only development, create or update `.env.local` in the project root:

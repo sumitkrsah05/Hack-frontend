@@ -13,6 +13,10 @@ import ConfigForm from "@/pages/ConfigForm";
 import Monitor from "@/pages/Monitor";
 import Report from "@/pages/Report";
 import History from "@/pages/History";
+import BlueLaunch from "@/pages/BlueLaunch";
+import BlueMonitor from "@/pages/BlueMonitor";
+import BlueReport from "@/pages/BlueReport";
+import BlueHistory from "@/pages/BlueHistory";
 
 function App() {
   return (
@@ -29,6 +33,10 @@ function App() {
                 <Route path="/monitor/:jobId" element={<Monitor />} />
                 <Route path="/report/:jobId" element={<Report />} />
                 <Route path="/history" element={<History />} />
+                <Route path="/blue" element={<BlueLaunch />} />
+                <Route path="/blue/monitor/:jobId" element={<BlueMonitor />} />
+                <Route path="/blue/report/:jobId" element={<BlueReport />} />
+                <Route path="/blue/history" element={<BlueHistory />} />
                 <Route path="*" element={<PageNotFound />} />
               </Route>
             </Routes>

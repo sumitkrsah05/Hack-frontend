@@ -3,25 +3,36 @@ import React, {
   useContext,
   useState,
   useCallback,
-  useEffect,
 } from "react";
 import { getApiBaseUrl, setApiBaseUrl } from "@/lib/api";
+import { getBlueApiBaseUrl, setBlueApiBaseUrl } from "@/lib/blueApi";
 
 const ScanContext = createContext(null);
 const HISTORY_KEY = "redagent_history";
+const BLUE_HISTORY_KEY = "blueagent_history";
 const BOOT_KEY = "redagent_booted";
 
-function loadHistory() {
+function load(key) {
   try {
-    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    return JSON.parse(localStorage.getItem(key)) || [];
   } catch {
     return [];
   }
 }
 
+function loadHistory() {
+  return load(HISTORY_KEY);
+}
+
+function loadBlueHistory() {
+  return load(BLUE_HISTORY_KEY);
+}
+
 export function ScanProvider({ children }) {
   const [history, setHistory] = useState(loadHistory);
+  const [analyses, setAnalyses] = useState(loadBlueHistory);
   const [apiBase, setApiBaseState] = useState(getApiBaseUrl());
+  const [blueApiBase, setBlueApiBaseState] = useState(getBlueApiBaseUrl());
   const [booted, setBooted] = useState(
     () => sessionStorage.getItem(BOOT_KEY) === "1"
   );
@@ -30,6 +41,13 @@ export function ScanProvider({ children }) {
     setHistory(next);
     try {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+    } catch {}
+  }, []);
+
+  const persistBlue = useCallback((next) => {
+    setAnalyses(next);
+    try {
+      localStorage.setItem(BLUE_HISTORY_KEY, JSON.stringify(next));
     } catch {}
   }, []);
 
@@ -55,9 +73,44 @@ export function ScanProvider({ children }) {
     [persist]
   );
 
+  // ---- Blue Agent analyses (same shape/idioms as the red scan history) ----
+
+  const addAnalysis = useCallback(
+    (analysis) => {
+      const next = [
+        { ts: Date.now(), ...analysis },
+        ...loadBlueHistory().filter((a) => a.job_id !== analysis.job_id),
+      ].slice(0, 50);
+      persistBlue(next);
+    },
+    [persistBlue]
+  );
+
+  const updateAnalysis = useCallback(
+    (jobId, patch) => {
+      const next = loadBlueHistory().map((a) =>
+        a.job_id === jobId ? { ...a, ...patch } : a
+      );
+      persistBlue(next);
+    },
+    [persistBlue]
+  );
+
+  const removeAnalysis = useCallback(
+    (jobId) => {
+      persistBlue(loadBlueHistory().filter((a) => a.job_id !== jobId));
+    },
+    [persistBlue]
+  );
+
   const setApiBase = useCallback((v) => {
     setApiBaseUrl(v);
     setApiBaseState(getApiBaseUrl());
+  }, []);
+
+  const setBlueApiBase = useCallback((v) => {
+    setBlueApiBaseUrl(v);
+    setBlueApiBaseState(getBlueApiBaseUrl());
   }, []);
 
   const finishBoot = useCallback(() => {
@@ -73,8 +126,14 @@ export function ScanProvider({ children }) {
         history,
         addScan,
         updateScan,
+        analyses,
+        addAnalysis,
+        updateAnalysis,
+        removeAnalysis,
         apiBase,
         setApiBase,
+        blueApiBase,
+        setBlueApiBase,
         booted,
         finishBoot,
       }}

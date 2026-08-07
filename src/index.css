@@ -132,6 +132,7 @@
 @keyframes pulse-ring { 0%{transform:scale(0.7);opacity:0.7} 100%{transform:scale(1.6);opacity:0} }
 @keyframes float-up { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 @keyframes boot-bar { from{width:0} to{width:100%} }
+@keyframes sweep-x { 0%{transform:translateX(-100%)} 100%{transform:translateX(300%)} }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }

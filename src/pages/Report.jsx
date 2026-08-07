@@ -16,8 +16,11 @@ import {
   Eye,
   Target,
   Hash,
+  Shield,
+  Loader2,
 } from "lucide-react";
 import { api, ApiError, SEVERITY, SEVERITY_ORDER } from "@/lib/api";
+import { blueApi } from "@/lib/blueApi";
 import { useScanStore } from "@/lib/scanStore";
 import { useCopy } from "@/lib/hooks";
 import {
@@ -30,6 +33,7 @@ import { cn } from "@/lib/utils";
 import CountUp from "@/components/CountUp";
 import SeverityMeter from "@/components/SeverityMeter";
 import GlitchButton from "@/components/GlitchButton";
+import JSONView from "@/components/JSONView";
 
 function StatCard({ icon: Icon, label, children, color = "#00FF9C" }) {
   return (
@@ -111,42 +115,6 @@ function RadialPct({ pct }) {
       <div className="absolute inset-0 flex items-center justify-center">
         <CountUp value={v} suffix="%" className="font-mono text-sm font-bold text-accent" />
       </div>
-    </div>
-  );
-}
-
-function JSONView({ data }) {
-  const [open, setOpen] = useState(false);
-  const html = useMemo(() => {
-    const json = JSON.stringify(data, null, 2);
-    return json
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(
-        /("(\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|-?\d+\.?\d*/g,
-        (m, str, colon, bool) => {
-          if (str) return colon ? `<span style="color:#22D3EE">${str}</span>${colon}` : `<span style="color:#00FF9C">${str}</span>`;
-          if (bool) return `<span style="color:#FFB020">${m}</span>`;
-          return `<span style="color:#FF6B2C">${m}</span>`;
-        }
-      );
-  }, [data]);
-
-  return (
-    <div className="panel">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-4 py-2.5 border-b border-border/15 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <span>report.json</span>
-        <ChevronDown className={cn("w-4 h-4 transition-transform", open && "rotate-180")} />
-      </button>
-      {open && (
-        <pre
-          className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-foreground/80 max-h-96"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      )}
     </div>
   );
 }
@@ -292,12 +260,13 @@ function FindingsTable({ findings = [] }) {
 export default function Report() {
   const { jobId } = useParams();
   const navigate = useNavigate();
-  const { updateScan } = useScanStore();
+  const { updateScan, addAnalysis } = useScanStore();
   const [copied, copy] = useCopy();
   const [scan, setScan] = useState(null);
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [conflict, setConflict] = useState(false);
+  const [handoff, setHandoff] = useState({ busy: false, error: null });
 
   useEffect(() => {
     let alive = true;
@@ -367,6 +336,32 @@ export default function Report() {
   const numeric = report?.numeric_verification;
 
   const auditIntact = audit?.intact !== false;
+
+  // Hand this report to the Blue Agent. The document is posted inline, so the
+  // handoff works even when the Blue Agent host cannot reach the Red Agent.
+  const sendToBlue = async () => {
+    setHandoff({ busy: true, error: null });
+    try {
+      const document = report || scan?.result || scan;
+      const res = await blueApi.startAnalysis({ report: document });
+      addAnalysis({
+        job_id: res.job_id,
+        status: res.status || "queued",
+        source: "red-report",
+        source_ref: jobId,
+        target: scan?.target,
+        mode: scan?.mode,
+      });
+      navigate(`/blue/monitor/${res.job_id}`);
+    } catch (e) {
+      setHandoff({
+        busy: false,
+        error: e.status
+          ? `[${e.status}] ${e.message}`
+          : e.message || "blue agent handoff failed",
+      });
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
@@ -527,6 +522,46 @@ export default function Report() {
       {/* Raw JSON */}
       <div className="mb-8">
         <JSONView data={report || scan} />
+      </div>
+
+      {/* Blue Agent handoff */}
+      <div className="panel p-5 mb-8 border-accent/25">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <Shield
+            className="w-8 h-8 text-accent shrink-0"
+            style={{ filter: "drop-shadow(0 0 8px rgba(34,211,238,0.5))" }}
+          />
+          <div className="flex-1 min-w-0">
+            <div className="label-xs text-accent">BLUE TEAM ANALYSIS</div>
+            <p className="font-mono text-xs text-foreground/70 mt-1 leading-relaxed">
+              Send these {findings.length} findings to the Blue Agent for root
+              cause, business impact, MITRE ATT&amp;CK mapping, prioritised
+              remediation and detection rules.
+            </p>
+          </div>
+          <GlitchButton
+            onClick={sendToBlue}
+            disabled={handoff.busy}
+            variant="accent"
+            className="shrink-0"
+          >
+            {handoff.busy ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" /> HANDING OFF…
+              </>
+            ) : (
+              <>
+                <Shield className="w-4 h-4" /> ANALYZE WITH BLUE
+              </>
+            )}
+          </GlitchButton>
+        </div>
+        {handoff.error && (
+          <p className="mt-3 font-mono text-[11px] text-destructive flex items-start gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+            {handoff.error}
+          </p>
+        )}
       </div>
 
       {/* Actions */}

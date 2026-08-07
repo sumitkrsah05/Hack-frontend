@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Activity, Lock } from "lucide-react";
+import { ArrowRight, ShieldCheck, Activity, Lock, Shield } from "lucide-react";
 import { api } from "@/lib/api";
+import { blueApi } from "@/lib/blueApi";
 import GlitchButton from "@/components/GlitchButton";
 import DecryptedText from "@/components/DecryptedText";
 import MatrixRain from "@/components/MatrixRain";
@@ -12,9 +13,41 @@ const FEATURES = [
   "Non-destructive ROE",
 ];
 
+function CoreChip({ health, label, tone = "primary" }) {
+  const on =
+    tone === "accent"
+      ? "border-accent/40 text-accent bg-accent/5"
+      : "border-primary/40 text-primary bg-primary/5";
+  const dot = tone === "accent" ? "bg-accent" : "bg-primary";
+  return (
+    <span
+      className={`inline-flex items-center gap-2 px-3 py-1.5 border rounded-sm font-mono text-[11px] tracking-[0.14em] ${
+        health === "ok"
+          ? on
+          : health === "offline"
+          ? "border-destructive/50 text-destructive bg-destructive/5"
+          : "border-border/30 text-muted-foreground"
+      }`}
+    >
+      <span
+        className={`w-2 h-2 rounded-full ${
+          health === "ok"
+            ? `${dot} animate-pulse`
+            : health === "offline"
+            ? "bg-destructive"
+            : "bg-muted-foreground"
+        }`}
+      />
+      {label}:{" "}
+      {health === "ok" ? "OK" : health === "offline" ? "OFFLINE" : "…"}
+    </span>
+  );
+}
+
 export default function Landing() {
   const navigate = useNavigate();
   const [health, setHealth] = useState("checking");
+  const [blueHealth, setBlueHealth] = useState("checking");
 
   useEffect(() => {
     let alive = true;
@@ -22,6 +55,10 @@ export default function Landing() {
       .health()
       .then(() => alive && setHealth("ok"))
       .catch(() => alive && setHealth("offline"));
+    blueApi
+      .health()
+      .then(() => alive && setBlueHealth("ok"))
+      .catch(() => alive && setBlueHealth("offline"));
     return () => {
       alive = false;
     };
@@ -44,7 +81,7 @@ export default function Landing() {
 
           <h1 className="font-display font-extrabold tracking-tight leading-none">
             <DecryptedText
-              text="RedAgent"
+              text="RedBlueAgent"
               className="block text-6xl md:text-8xl text-primary text-glow-primary"
               duration={1500}
             />
@@ -72,30 +109,8 @@ export default function Landing() {
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <span
-              className={`inline-flex items-center gap-2 px-3 py-1.5 border rounded-sm font-mono text-[11px] tracking-[0.14em] ${
-                health === "ok"
-                  ? "border-primary/40 text-primary bg-primary/5"
-                  : health === "offline"
-                  ? "border-destructive/50 text-destructive bg-destructive/5"
-                  : "border-border/30 text-muted-foreground"
-              }`}
-            >
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  health === "ok"
-                    ? "bg-primary animate-pulse"
-                    : health === "offline"
-                    ? "bg-destructive"
-                    : "bg-muted-foreground"
-                }`}
-              />
-              {health === "ok"
-                ? "CORE: OK"
-                : health === "offline"
-                ? "CORE: OFFLINE"
-                : "CORE: …"}
-            </span>
+            <CoreChip health={health} label="RED CORE" />
+            <CoreChip health={blueHealth} label="BLUE CORE" tone="accent" />
           </div>
         </div>
       </section>
@@ -140,6 +155,52 @@ export default function Landing() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Blue team handoff */}
+      <section className="border-t border-border/15 bg-[#0B0F11]">
+        <div className="max-w-5xl mx-auto px-6 py-16">
+          <div className="label-xs mb-6 text-accent">// THEN, THE BLUE SIDE</div>
+          <div className="flex flex-col md:flex-row md:items-center gap-8">
+            <div className="flex-1">
+              <h2 className="font-display font-bold text-2xl md:text-3xl text-accent text-glow-accent mb-3">
+                BlueAgent
+              </h2>
+              <p className="font-mono text-sm text-foreground/75 leading-relaxed mb-5 max-w-xl">
+                Every red engagement can be handed straight to the defensive
+                agent. It analyses each finding for root cause and business
+                impact, maps it to MITRE ATT&amp;CK, scores likelihood against
+                impact, and returns prioritised remediation with detection
+                rules.
+              </p>
+              <GlitchButton
+                onClick={() => navigate("/blue")}
+                variant="accent"
+                className="px-6"
+              >
+                <Shield className="w-4 h-4" /> RUN BLUE ANALYSIS
+                <ArrowRight className="w-4 h-4" />
+              </GlitchButton>
+            </div>
+            <div className="grid grid-cols-2 gap-3 md:w-80 shrink-0">
+              {[
+                ["ROOT CAUSE", "why it exists"],
+                ["MITRE ATT&CK", "tactics + techniques"],
+                ["RISK SCORE", "P0 → P3 priority"],
+                ["DETECTION", "log source + signal"],
+              ].map(([k, d]) => (
+                <div key={k} className="panel p-3">
+                  <div className="font-mono text-[11px] text-accent tracking-wide">
+                    {k}
+                  </div>
+                  <div className="font-mono text-[10px] text-muted-foreground mt-1">
+                    {d}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

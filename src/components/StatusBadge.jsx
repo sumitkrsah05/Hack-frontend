@@ -20,6 +20,14 @@ const MAP = {
     glow: "shadow-[0_0_14px_rgba(0,255,156,0.5)]",
     border: "border-primary/50",
   },
+  // BlueAgent spells the terminal success state "completed".
+  completed: {
+    label: "COMPLETED",
+    text: "text-primary",
+    dot: "bg-primary",
+    glow: "shadow-[0_0_14px_rgba(0,255,156,0.5)]",
+    border: "border-primary/50",
+  },
   error: {
     label: "ERROR",
     text: "text-destructive",
