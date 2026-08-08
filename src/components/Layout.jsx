@@ -8,6 +8,8 @@ import {
   ShieldCheck,
   Shield,
   Stethoscope,
+  ScrollText,
+  Blend,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { blueApi, BLUE_DEFAULT_BASE } from "@/lib/blueApi";
@@ -37,14 +39,25 @@ const BLUE_NAV = [
     to: "/blue",
     label: "Analyze",
     icon: Shield,
-    match: (p) =>
-      p === "/blue" || p.startsWith("/blue/monitor") || p.startsWith("/blue/report"),
+    match: (p) => p === "/blue" || p.startsWith("/blue/monitor"),
   },
+];
+
+const PURPLE_NAV = [
   {
     to: "/blue/history",
     label: "Analyses",
     icon: Stethoscope,
-    match: (p) => p.startsWith("/blue/history"),
+    match: (p) => p.startsWith("/blue/history") || p.startsWith("/blue/report"),
+  },
+];
+
+const GOVERNANCE_NAV = [
+  {
+    to: "/roe",
+    label: "ROE & Scope",
+    icon: ScrollText,
+    match: (p) => p.startsWith("/roe"),
   },
 ];
 
@@ -130,30 +143,81 @@ function ApiBaseEditor({ label, value, onSave, fallback, accentClass }) {
   );
 }
 
-function NavGroup({ title, items, pathname, onNavigate, accent }) {
-  const activeCls =
-    accent === "accent"
-      ? "bg-accent/10 text-accent border-accent/30 glow-accent"
-      : "bg-primary/10 text-primary border-primary/30 glow-primary";
+function NavGroup({ team, items, pathname, onNavigate }) {
+  const { color, label, sub, Icon } = team;
   return (
-    <div className="space-y-1">
-      <div className="label-xs px-3 pt-3 pb-1">{title}</div>
-      {items.map((item) => (
-        <Link
-          key={item.to}
-          to={item.to}
-          onClick={onNavigate}
-          className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-sm font-mono text-xs uppercase tracking-[0.14em] transition-all border border-transparent",
-            item.match(pathname)
-              ? activeCls
-              : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-          )}
+    <div
+      className="rounded-md border overflow-hidden"
+      style={{
+        borderColor: `${color}33`,
+        background: `linear-gradient(180deg, ${color}0D, transparent 60%)`,
+      }}
+    >
+      {/* Team header */}
+      <div
+        className="flex items-center gap-2.5 px-3 py-2.5 border-b"
+        style={{ borderColor: `${color}22`, background: `${color}0F` }}
+      >
+        <span
+          className="flex items-center justify-center w-7 h-7 rounded-sm shrink-0"
+          style={{
+            background: `${color}1A`,
+            border: `1px solid ${color}40`,
+          }}
         >
-          <item.icon className="w-4 h-4" />
-          {item.label}
-        </Link>
-      ))}
+          <Icon className="w-4 h-4" style={{ color }} />
+        </span>
+        <div className="leading-tight min-w-0">
+          <div
+            className="font-mono font-bold text-[11px] tracking-[0.16em]"
+            style={{ color }}
+          >
+            {label}
+          </div>
+          <div className="font-mono text-[8px] text-muted-foreground tracking-[0.2em] uppercase truncate">
+            {sub}
+          </div>
+        </div>
+      </div>
+
+      {/* Team nav items */}
+      <div className="p-1.5 space-y-1">
+        {items.map((item) => {
+          const active = item.match(pathname);
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={onNavigate}
+              className={cn(
+                "relative flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-sm font-mono text-xs uppercase tracking-[0.14em] transition-all",
+                !active &&
+                  "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+              )}
+              style={
+                active
+                  ? {
+                      color,
+                      background: `${color}14`,
+                      boxShadow: `inset 0 0 0 1px ${color}40`,
+                    }
+                  : undefined
+              }
+            >
+              {/* Active edge marker */}
+              <span
+                className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full transition-opacity"
+                style={{ background: color, opacity: active ? 1 : 0 }}
+              />
+              <item.icon
+                className="w-4 h-4 shrink-0"
+                style={active ? { color } : undefined}
+              />
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -208,39 +272,116 @@ export default function Layout() {
         <Link
           to="/"
           onClick={closeNav}
-          className="flex items-center gap-2.5 px-5 h-16 border-b border-border/15"
+          className="group flex items-center gap-3 px-5 h-16 border-b border-border/15 relative overflow-hidden"
         >
-          <span className="relative">
-            <ShieldCheck
-              className="w-6 h-6 text-primary"
-              style={{ filter: "drop-shadow(0 0 6px rgba(0,255,156,0.6))" }}
-            />
+          {/* Ambient glow sweep on hover */}
+          <span
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle at 20% 50%, rgba(255,153,51,0.14), transparent 60%), radial-gradient(circle at 80% 50%, rgba(19,136,8,0.16), transparent 60%)",
+            }}
+          />
+
+          {/* Emblem */}
+          <span className="relative shrink-0">
+            <span
+              className="flex items-center justify-center w-9 h-9 rounded-lg relative transition-transform duration-300 group-hover:scale-105"
+              style={{
+                background:
+                  "linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #138808 100%)",
+                boxShadow:
+                  "0 0 12px rgba(255,153,51,0.5), inset 0 0 0 1px rgba(255,255,255,0.15)",
+              }}
+            >
+              <ShieldCheck
+                className="w-5 h-5"
+                style={{
+                  color: "#000080",
+                  filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.25))",
+                }}
+              />
+            </span>
+            {/* Live status pip */}
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-[#0B0F11] animate-pulse" />
           </span>
-          <div className="leading-none">
-            <div className="font-mono font-bold text-foreground text-sm tracking-tight">
-              Red<span className="text-primary">Agent</span>
-              <span className="text-muted-foreground"> / </span>
-              <span className="text-accent">Blue</span>
+
+          <div className="leading-none relative">
+            <div className="font-display font-extrabold text-[15px] tracking-tight">
+              <span
+                style={{
+                  background: "linear-gradient(90deg, #FF9933, #FFFFFF 55%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                SWARAJ
+              </span>
+              <span
+                style={{
+                  background: "linear-gradient(90deg, #FFFFFF 45%, #2EB82C)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                KAVACH
+              </span>
             </div>
-            <div className="font-mono text-[9px] text-muted-foreground tracking-[0.2em] mt-0.5">
-              OPSEC CONSOLE
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="h-px w-4 bg-gradient-to-r from-primary to-transparent" />
+              <span className="font-mono text-[8px] text-muted-foreground tracking-[0.28em] uppercase">
+                OPSEC Console
+              </span>
             </div>
           </div>
         </Link>
 
-        <nav className="flex-1 p-3 overflow-y-auto">
+        <nav className="flex-1 p-3 space-y-3 overflow-y-auto">
           <NavGroup
-            title="// RED — OFFENSE"
+            team={{
+              color: "#FF3B4E",
+              label: "RED TEAM",
+              sub: "Offense · Attack Sim",
+              Icon: Crosshair,
+            }}
             items={RED_NAV}
             pathname={location.pathname}
             onNavigate={closeNav}
           />
           <NavGroup
-            title="// BLUE — DEFENSE"
+            team={{
+              color: "#22D3EE",
+              label: "BLUE TEAM",
+              sub: "Defense · Detection",
+              Icon: Shield,
+            }}
             items={BLUE_NAV}
             pathname={location.pathname}
             onNavigate={closeNav}
-            accent="accent"
+          />
+          <NavGroup
+            team={{
+              color: "#D946EF",
+              label: "PURPLE TEAM",
+              sub: "Correlation · Analysis",
+              Icon: Blend,
+            }}
+            items={PURPLE_NAV}
+            pathname={location.pathname}
+            onNavigate={closeNav}
+          />
+          <NavGroup
+            team={{
+              color: "#A78BFA",
+              label: "GOVERNANCE",
+              sub: "Authorization · Scope",
+              Icon: ScrollText,
+            }}
+            items={GOVERNANCE_NAV}
+            pathname={location.pathname}
+            onNavigate={closeNav}
           />
         </nav>
 

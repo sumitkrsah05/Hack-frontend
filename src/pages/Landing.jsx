@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ShieldCheck, Activity, Lock, Shield } from "lucide-react";
 import { api } from "@/lib/api";
@@ -6,6 +6,7 @@ import { blueApi } from "@/lib/blueApi";
 import GlitchButton from "@/components/GlitchButton";
 import DecryptedText from "@/components/DecryptedText";
 import MatrixRain from "@/components/MatrixRain";
+const KavachShield = lazy(() => import("@/components/KavachShield"));
 
 const FEATURES = [
   "Black-box · Gray-box · White-box",
@@ -81,14 +82,22 @@ export default function Landing() {
 
           <h1 className="font-display font-extrabold tracking-tight leading-none">
             <DecryptedText
-              text="RedBlueAgent"
-              className="block text-6xl md:text-8xl text-primary text-glow-primary"
+              text="SWARAJ KAVACH"
+              className="block text-6xl md:text-8xl"
+              style={{
+                background:
+                  "linear-gradient(90deg, #FF9933 0%, #FF9933 32%, #FFFFFF 50%, #2EB82C 68%, #2EB82C 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                filter: "drop-shadow(0 0 18px rgba(255,153,51,0.25))",
+              }}
               duration={1500}
             />
           </h1>
 
           <p className="mt-8 font-mono text-sm md:text-base text-foreground/80 max-w-xl mx-auto leading-relaxed">
-            Safety-gated offensive security. Three modes. One console.
+            AI Security Validation Platform. Safety-gated offensive security. Three modes. One console.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -155,6 +164,67 @@ export default function Landing() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Kavach — active defense layer */}
+      <section className="relative border-t border-border/15 overflow-hidden">
+        <div className="absolute inset-0 dot-bg opacity-60" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,255,156,0.06),transparent_65%)]" />
+
+        <div className="relative max-w-5xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-6 items-center">
+          {/* Copy */}
+          <div>
+            <div className="label-xs mb-6">// KAVACH — ACTIVE DEFENSE LAYER</div>
+            <h2 className="font-display font-extrabold text-3xl md:text-4xl tracking-tight leading-tight">
+              <span className="text-glow-primary text-primary">ARMOUR</span>{" "}
+              <span className="text-foreground">FOR YOUR</span>
+              <br />
+              <span className="text-foreground">ENTIRE STACK</span>
+            </h2>
+            <p className="mt-5 font-mono text-sm text-foreground/75 leading-relaxed max-w-md">
+              Kavach wraps every engagement in a live protective layer —
+              continuously scanning the perimeter, gating unsafe actions, and
+              sealing findings into a tamper-evident audit chain. Offense runs
+              hot; the platform stays shielded.
+            </p>
+
+            <div className="mt-8 grid grid-cols-3 gap-3 max-w-md">
+              {[
+                ["SHIELD", "ACTIVE", "text-primary"],
+                ["SCAN", "CONTINUOUS", "text-accent"],
+                ["INTEGRITY", "100%", "text-primary"],
+              ].map(([k, v, c]) => (
+                <div key={k} className="panel p-3 text-center">
+                  <div className="label-xs">{k}</div>
+                  <div className={`font-mono text-xs font-bold mt-1.5 tracking-wide ${c}`}>
+                    <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle animate-pulse ${c === "text-accent" ? "bg-accent" : "bg-primary"}`} />
+                    {v}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 3D shield */}
+          <div className="relative h-[320px] sm:h-[400px] md:h-[460px]">
+            {/* corner brackets */}
+            <div className="absolute top-0 left-0 w-6 h-6 border-t border-l border-primary/40" />
+            <div className="absolute top-0 right-0 w-6 h-6 border-t border-r border-primary/40" />
+            <div className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-primary/40" />
+            <div className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-primary/40" />
+
+            <Suspense fallback={null}>
+              <KavachShield className="absolute inset-0" />
+            </Suspense>
+
+            <div className="absolute top-2 left-3 font-mono text-[9px] tracking-[0.2em] text-primary/60">
+              KVCH-01 // PERIMETER
+            </div>
+            <div className="absolute bottom-2 right-3 font-mono text-[9px] tracking-[0.2em] text-muted-foreground/60">
+              STATUS: SHIELDED
+            </div>
+          </div>
         </div>
       </section>
 

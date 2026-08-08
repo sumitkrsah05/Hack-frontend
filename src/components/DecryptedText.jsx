@@ -6,6 +6,7 @@ const GLYPHS = "!<>-_\\/[]{}=+*^?#01ABCDEFξψλΣ";
 export default function DecryptedText({
   text,
   className,
+  style,
   duration = 1100,
   as: Tag = "span",
 }) {
@@ -36,5 +37,9 @@ export default function DecryptedText({
     return () => cancelAnimationFrame(raf);
   }, [text, duration, reduced]);
 
-  return <Tag className={className}>{out}</Tag>;
+  return (
+    <Tag className={className} style={style}>
+      {out}
+    </Tag>
+  );
 }

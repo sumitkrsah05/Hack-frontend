@@ -19,6 +19,7 @@ import { useScanStore } from "@/lib/scanStore";
 import { cn } from "@/lib/utils";
 import GlitchButton from "@/components/GlitchButton";
 import DecryptedText from "@/components/DecryptedText";
+import TeamBadge from "@/components/TeamBadge";
 
 const SOURCES = [
   {
@@ -270,13 +271,20 @@ export default function BlueLaunch() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <div className="label-xs mb-2 text-accent">// BLUE TEAM ANALYSIS</div>
+      <TeamBadge
+        color="#22D3EE"
+        icon={Shield}
+        label="BLUE TEAM"
+        sub="Detection Correlation Engine"
+        className="mb-6"
+      />
+
       <h1 className="font-display font-bold text-2xl md:text-3xl mb-1 flex items-center gap-3">
         <Shield
           className="w-7 h-7 text-accent"
           style={{ filter: "drop-shadow(0 0 8px rgba(34,211,238,0.6))" }}
         />
-        <DecryptedText text="Defensive analysis" />
+        <DecryptedText text="Security Telemetry Collection & Normalization Engine" />
       </h1>
       <p className="font-mono text-xs text-muted-foreground mb-6 leading-relaxed">
         Hand a Red Agent report to the Blue Agent: root cause, business impact,

@@ -8,7 +8,9 @@ import {
   Shield,
   Trash2,
   AlertTriangle,
+  Blend,
 } from "lucide-react";
+import TeamBadge from "@/components/TeamBadge";
 import { blueApi, riskColorFor } from "@/lib/blueApi";
 import { useScanStore } from "@/lib/scanStore";
 import { cn } from "@/lib/utils";
@@ -82,6 +84,13 @@ export default function BlueHistory() {
     <div className="max-w-4xl mx-auto px-6 py-12">
       <div className="flex items-start justify-between gap-4 mb-1">
         <div>
+          <TeamBadge
+            color="#D946EF"
+            icon={Blend}
+            label="PURPLE TEAM"
+            sub="Correlation · Analysis"
+            className="mb-3"
+          />
           <div className="label-xs mb-3 text-accent">// BLUE ANALYSES</div>
           <h1 className="font-mono font-bold text-2xl text-foreground mb-1">
             Defensive analyses

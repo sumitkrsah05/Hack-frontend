@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Crosshair, Cloud, FileCode2, ArrowRight, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
 import DecryptedText from "@/components/DecryptedText";
+import TeamBadge from "@/components/TeamBadge";
 
 const STATIC_MODES = {
   black_box: {
@@ -67,9 +68,16 @@ export default function ModeSelector() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
+      <TeamBadge
+        color="#FF3B4E"
+        icon={Crosshair}
+        label="RED TEAM"
+        sub="Attack Simulation"
+        className="mb-6"
+      />
       <div className="label-xs mb-3">// STEP 01 — SELECT ENGAGEMENT MODE</div>
       <h1 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-2">
-        <DecryptedText text="Choose your attack surface" />
+        <DecryptedText text="AI Scenerio Orchestration Engine" />
       </h1>
       <p className="font-mono text-sm text-muted-foreground mb-10">
         Each mode runs a fixed toolchain under a safety-gated, audited ROE.

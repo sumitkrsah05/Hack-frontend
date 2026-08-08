@@ -17,6 +17,7 @@ import BlueLaunch from "@/pages/BlueLaunch";
 import BlueMonitor from "@/pages/BlueMonitor";
 import BlueReport from "@/pages/BlueReport";
 import BlueHistory from "@/pages/BlueHistory";
+import ROE from "@/pages/ROE";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/blue/monitor/:jobId" element={<BlueMonitor />} />
                 <Route path="/blue/report/:jobId" element={<BlueReport />} />
                 <Route path="/blue/history" element={<BlueHistory />} />
+                <Route path="/roe" element={<ROE />} />
                 <Route path="*" element={<PageNotFound />} />
               </Route>
             </Routes>
