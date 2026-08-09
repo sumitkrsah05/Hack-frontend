@@ -10,6 +10,7 @@ import {
   Stethoscope,
   ScrollText,
   Blend,
+  Menu,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { blueApi, BLUE_DEFAULT_BASE } from "@/lib/blueApi";
@@ -235,6 +236,7 @@ export default function Layout() {
   const [health, setHealth] = useState("checking");
   const [blueHealth, setBlueHealth] = useState("checking");
   const [mobileNav, setMobileNav] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   useEffect(() => {
     let alive = true;
@@ -258,6 +260,16 @@ export default function Layout() {
 
   const closeNav = () => setMobileNav(false);
 
+  const toggleSidebar = () => {
+    // On mobile the sidebar is a drawer driven by mobileNav;
+    // on desktop the hamburger collapses/expands it.
+    if (window.innerWidth < 1024) {
+      setMobileNav((n) => !n);
+    } else {
+      setCollapsed((c) => !c);
+    }
+  };
+
   return (
     <div className="relative min-h-screen flex bg-background scanlines crt-noise">
       {!booted && <BootSequence onDone={finishBoot} />}
@@ -265,14 +277,16 @@ export default function Layout() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed lg:static z-40 inset-y-0 left-0 w-60 shrink-0 bg-[#0B0F11] border-r border-border/15 flex flex-col transition-transform duration-300",
-          mobileNav ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          "fixed lg:static z-40 inset-y-0 left-0 w-60 shrink-0 bg-[#0B0F11] border-r border-border/15 flex flex-col transition-all duration-300",
+          mobileNav ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          collapsed && "lg:-translate-x-full lg:-ml-60"
         )}
       >
+        <div className="flex items-center h-16 border-b border-border/15">
         <Link
           to="/"
           onClick={closeNav}
-          className="group flex items-center gap-3 px-5 h-16 border-b border-border/15 relative overflow-hidden"
+          className="group flex flex-1 items-center gap-3 pl-5 pr-2 h-full relative overflow-hidden"
         >
           {/* Ambient glow sweep on hover */}
           <span
@@ -337,6 +351,16 @@ export default function Layout() {
             </div>
           </div>
         </Link>
+
+        <button
+          onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
+          title="Toggle sidebar"
+          className="mr-3 flex items-center justify-center w-8 h-8 shrink-0 rounded-sm border border-border/20 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+        >
+          <Menu className="w-4 h-4" />
+        </button>
+        </div>
 
         <nav className="flex-1 p-3 space-y-3 overflow-y-auto">
           <NavGroup
@@ -419,6 +443,18 @@ export default function Layout() {
           className="fixed inset-0 z-30 bg-background/70 lg:hidden"
           onClick={closeNav}
         />
+      )}
+
+      {/* Reopen hamburger when sidebar is collapsed (desktop) */}
+      {collapsed && (
+        <button
+          onClick={() => setCollapsed(false)}
+          aria-label="Open sidebar"
+          title="Open sidebar"
+          className="hidden lg:flex fixed top-4 left-4 z-40 items-center justify-center w-9 h-9 rounded-sm border border-border/30 bg-[#0B0F11] text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+        >
+          <Menu className="w-4 h-4" />
+        </button>
       )}
 
       {/* Main */}

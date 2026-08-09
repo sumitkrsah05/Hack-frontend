@@ -7,6 +7,7 @@ import GlitchButton from "@/components/GlitchButton";
 import DecryptedText from "@/components/DecryptedText";
 import MatrixRain from "@/components/MatrixRain";
 const KavachShield = lazy(() => import("@/components/KavachShield"));
+const HeroKavachDefense = lazy(() => import("@/components/HeroKavachDefense"));
 
 const FEATURES = [
   "Black-box · Gray-box · White-box",
@@ -74,52 +75,74 @@ export default function Landing() {
           <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-6 pt-24 pb-20 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 border border-border/30 bg-card/60 rounded-sm font-mono text-[10px] tracking-[0.2em] text-muted-foreground mb-8">
-            <Activity className="w-3 h-3 text-primary" />
-            OFFENSIVE SECURITY // CONSOLE
-          </div>
-
-          <h1 className="font-display font-extrabold tracking-tight leading-none">
-            <DecryptedText
-              text="SWARAJ KAVACH"
-              className="block text-6xl md:text-8xl"
-              style={{
-                background:
-                  "linear-gradient(90deg, #FF9933 0%, #FF9933 32%, #FFFFFF 50%, #2EB82C 68%, #2EB82C 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                filter: "drop-shadow(0 0 18px rgba(255,153,51,0.25))",
-              }}
-              duration={1500}
+        <div className="relative max-w-6xl mx-auto px-6 pt-20 pb-14 lg:pt-24 lg:pb-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)] gap-8 lg:gap-4 items-center">
+          {/* Left — existing hero content */}
+          <div className="relative z-10 text-center lg:text-left">
+            <img
+              src="/esds-logo.png"
+              alt="ESDS"
+              className="h-20 md:h-24 mx-auto lg:mx-0 mb-6 select-none"
+              draggable="false"
             />
-          </h1>
+            <div className="inline-flex items-center gap-2 px-3 py-1 border border-border/30 bg-card/60 rounded-sm font-mono text-[10px] tracking-[0.2em] text-muted-foreground mb-8">
+              <Activity className="w-3 h-3 text-primary" />
+              OFFENSIVE SECURITY // CONSOLE
+            </div>
 
-          <p className="mt-8 font-mono text-sm md:text-base text-foreground/80 max-w-xl mx-auto leading-relaxed">
-            AI Security Validation Platform. Safety-gated offensive security. Three modes. One console.
-          </p>
+            <h1 className="font-display font-extrabold tracking-tight leading-none">
+              <DecryptedText
+                text="SWARAJ CHAKRA"
+                className="block text-5xl sm:text-6xl md:text-7xl 2xl:text-8xl"
+                style={{
+                  background:
+                    "linear-gradient(90deg, #FF9933 0%, #FF9933 32%, #FFFFFF 50%, #2EB82C 68%, #2EB82C 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 0 18px rgba(255,153,51,0.25))",
+                }}
+                duration={1500}
+              />
+            </h1>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <GlitchButton
-              onClick={() => navigate("/scan")}
-              className="px-8 py-3.5 text-base"
-            >
-              <span className="cursor-block mr-1" />
-              INITIATE SCAN
-              <ArrowRight className="w-4 h-4" />
-            </GlitchButton>
-            <button
-              onClick={() => navigate("/history")}
-              className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground hover:text-accent transition-colors px-4 py-2"
-            >
-              view history →
-            </button>
+            <p className="mt-8 font-mono text-sm md:text-base text-foreground/80 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              AI Security Validation Platform. Safety-gated offensive security. Three modes. One console.
+            </p>
+
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <GlitchButton
+                onClick={() => navigate("/scan")}
+                className="px-8 py-3.5 text-base"
+              >
+                <span className="cursor-block mr-1" />
+                INITIATE SCAN
+                <ArrowRight className="w-4 h-4" />
+              </GlitchButton>
+              <button
+                onClick={() => navigate("/history")}
+                className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground hover:text-accent transition-colors px-4 py-2"
+              >
+                view history →
+              </button>
+            </div>
+
+            <div className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+              <CoreChip health={health} label="RED CORE" />
+              <CoreChip health={blueHealth} label="BLUE CORE" tone="accent" />
+            </div>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <CoreChip health={health} label="RED CORE" />
-            <CoreChip health={blueHealth} label="BLUE CORE" tone="accent" />
+          {/* Right — Kavach live defense animation */}
+          <div className="relative h-[260px] sm:h-[320px] lg:h-[520px] pointer-events-none select-none">
+            <Suspense fallback={null}>
+              <HeroKavachDefense className="absolute inset-0" />
+            </Suspense>
+            <div className="absolute top-1 right-1 font-mono text-[9px] tracking-[0.2em] text-primary/50">
+              KAVACH SHIELD // ACTIVE
+            </div>
+            <div className="absolute bottom-1 right-1 font-mono text-[9px] tracking-[0.2em] text-muted-foreground/50">
+              THREATS: DEFLECTED
+            </div>
           </div>
         </div>
       </section>

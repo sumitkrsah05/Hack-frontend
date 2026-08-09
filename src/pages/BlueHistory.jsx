@@ -91,7 +91,7 @@ export default function BlueHistory() {
             sub="Correlation · Analysis"
             className="mb-3"
           />
-          <div className="label-xs mb-3 text-accent">// BLUE ANALYSES</div>
+          <div className="label-xs mb-3 text-accent"></div>
           <h1 className="font-mono font-bold text-2xl text-foreground mb-1">
             Defensive analyses
           </h1>
@@ -209,7 +209,7 @@ export default function BlueHistory() {
         onClick={() => navigate("/blue")}
         className="mt-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-accent hover:text-glow-accent"
       >
-        <Shield className="w-4 h-4" /> new blue analysis
+       
       </button>
     </div>
   );
