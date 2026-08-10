@@ -340,7 +340,7 @@ export default function Layout() {
                   backgroundClip: "text",
                 }}
               >
-                KAVACH
+                CHAKRA
               </span>
             </div>
             <div className="flex items-center gap-1.5 mt-1">

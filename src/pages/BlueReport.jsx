@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -76,6 +77,66 @@ function useRecDecisions(jobId) {
   };
 
   return [decisions, decide];
+}
+
+function ConfirmDecisionModal({ pending, onConfirm, onCancel }) {
+  useEffect(() => {
+    if (!pending) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [pending]);
+
+  if (!pending) return null;
+  const accepting = pending.value === "accepted";
+  const color = accepting ? "#00FF9C" : "#FF2E63";
+  const Icon = accepting ? Check : X;
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      onClick={onCancel}
+    >
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      <div
+        className="panel relative w-full max-w-sm p-5"
+        style={{ borderColor: color + "55", animation: "float-up 0.15s ease-out both" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <Icon className="w-4 h-4" style={{ color }} />
+          <span
+            className="font-mono text-xs uppercase tracking-[0.14em]"
+            style={{ color }}
+          >
+            confirm {accepting ? "accept" : "reject"}
+          </span>
+        </div>
+        <p className="font-mono text-xs text-foreground/80 leading-relaxed mb-5">
+          {accepting
+            ? "mark this recommendation as accepted?"
+            : "mark this recommendation as rejected?"}
+        </p>
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onCancel}
+            className="px-3 py-1.5 border border-border/30 rounded-sm font-mono text-[11px] uppercase tracking-wider text-muted-foreground hover:border-border/60 hover:text-foreground transition-all"
+          >
+            cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-3 py-1.5 border rounded-sm font-mono text-[11px] uppercase tracking-wider transition-all"
+            style={{ color, borderColor: color + "66", background: color + "18" }}
+          >
+            {accepting ? "accept" : "reject"}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
 }
 
 function DecisionButton({ active, color, icon: Icon, label, onClick }) {
@@ -167,26 +228,30 @@ function Bullets({ items = [], color = "#22D3EE", decisions, onDecide, decideKey
             >
               {typeof t === "string" ? t : JSON.stringify(t)}
             </span>
-            {key && onDecide && (
+            {key && onDecide && !decision && (
               <span className="flex gap-1.5 shrink-0 ml-auto">
                 <DecisionButton
-                  active={decision === "accepted"}
+                  active={false}
                   color="#00FF9C"
                   icon={Check}
                   label="Accept"
-                  onClick={() =>
-                    onDecide(key, decision === "accepted" ? null : "accepted")
-                  }
+                  onClick={() => onDecide(key, "accepted")}
                 />
                 <DecisionButton
-                  active={decision === "rejected"}
+                  active={false}
                   color="#FF2E63"
                   icon={X}
                   label="Reject"
-                  onClick={() =>
-                    onDecide(key, decision === "rejected" ? null : "rejected")
-                  }
+                  onClick={() => onDecide(key, "rejected")}
                 />
+              </span>
+            )}
+            {key && decision === "accepted" && (
+              <span className="shrink-0 ml-auto">
+                <Pill color="#00FF9C" title="accepted">
+                  <Check className="w-3 h-3 inline mr-1 -mt-px" />
+                  action performed
+                </Pill>
               </span>
             )}
           </li>
@@ -433,32 +498,32 @@ function Finding({ finding, index, decisions, onDecide }) {
                               <div className="font-mono text-xs text-foreground leading-relaxed">
                                 {r.action}
                               </div>
-                              <div className="flex gap-1.5 shrink-0">
-                                <DecisionButton
-                                  active={decision === "accepted"}
-                                  color="#00FF9C"
-                                  icon={Check}
-                                  label="Accept"
-                                  onClick={() =>
-                                    onDecide(
-                                      recKey,
-                                      decision === "accepted" ? null : "accepted"
-                                    )
-                                  }
-                                />
-                                <DecisionButton
-                                  active={decision === "rejected"}
-                                  color="#FF2E63"
-                                  icon={X}
-                                  label="Reject"
-                                  onClick={() =>
-                                    onDecide(
-                                      recKey,
-                                      decision === "rejected" ? null : "rejected"
-                                    )
-                                  }
-                                />
-                              </div>
+                              {!decision && (
+                                <div className="flex gap-1.5 shrink-0">
+                                  <DecisionButton
+                                    active={false}
+                                    color="#00FF9C"
+                                    icon={Check}
+                                    label="Accept"
+                                    onClick={() => onDecide(recKey, "accepted")}
+                                  />
+                                  <DecisionButton
+                                    active={false}
+                                    color="#FF2E63"
+                                    icon={X}
+                                    label="Reject"
+                                    onClick={() => onDecide(recKey, "rejected")}
+                                  />
+                                </div>
+                              )}
+                              {decision === "accepted" && (
+                                <div className="shrink-0">
+                                  <Pill color="#00FF9C" title="accepted">
+                                    <Check className="w-3 h-3 inline mr-1 -mt-px" />
+                                    action performed
+                                  </Pill>
+                                </div>
+                              )}
                             </div>
                             <div className="flex flex-wrap gap-2 mt-2">
                               {r.category && <Pill color="#7A8B8F">{r.category}</Pill>}
@@ -550,6 +615,14 @@ export default function BlueReport() {
   const [sevFilter, setSevFilter] = useState("all");
   const [prioFilter, setPrioFilter] = useState("all");
   const [recDecisions, decideRec] = useRecDecisions(jobId);
+  const [pendingDecision, setPendingDecision] = useState(
+    /** @type {{ key: string, value: string } | null} */ (null)
+  );
+
+  const requestDecide = (key, value) => {
+    if (!value) decideRec(key, null); // undo needs no confirmation
+    else setPendingDecision({ key, value });
+  };
 
   useEffect(() => {
     let alive = true;
@@ -822,7 +895,7 @@ export default function BlueReport() {
                 <Bullets
                   items={items}
                   decisions={recDecisions}
-                  onDecide={decideRec}
+                  onDecide={requestDecide}
                   decideKey={`tech::${label.toLowerCase().replace(/\s+/g, "_")}`}
                 />
               </div>
@@ -890,7 +963,7 @@ export default function BlueReport() {
               finding={f}
               index={i}
               decisions={recDecisions}
-              onDecide={decideRec}
+              onDecide={requestDecide}
             />
           ))}
           {!filtered.length && (
@@ -949,6 +1022,15 @@ export default function BlueReport() {
           <RotateCcw className="w-4 h-4" /> NEW ANALYSIS
         </GlitchButton>
       </div>
+
+      <ConfirmDecisionModal
+        pending={pendingDecision}
+        onConfirm={() => {
+          if (pendingDecision) decideRec(pendingDecision.key, pendingDecision.value);
+          setPendingDecision(null);
+        }}
+        onCancel={() => setPendingDecision(null)}
+      />
     </div>
   );
 }
