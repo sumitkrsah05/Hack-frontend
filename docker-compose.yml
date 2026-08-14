@@ -1,0 +1,19 @@
+services:
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      # Keep container node_modules separate from the host's
+      - node_modules:/app/node_modules
+    environment:
+      - BASE44_LEGACY_SDK_IMPORTS=${BASE44_LEGACY_SDK_IMPORTS:-false}
+    env_file:
+      - path: .env.local
+        required: false
+
+volumes:
+  node_modules:

@@ -43,6 +43,7 @@ import CountUp from "@/components/CountUp";
 import SeverityMeter from "@/components/SeverityMeter";
 import GlitchButton from "@/components/GlitchButton";
 import JSONView from "@/components/JSONView";
+import ReportChat from "@/components/ReportChat";
 
 function useRecDecisions(jobId) {
   const storageKey = `blue-rec-decisions:${jobId}`;
@@ -1022,6 +1023,12 @@ export default function BlueReport() {
           <RotateCcw className="w-4 h-4" /> NEW ANALYSIS
         </GlitchButton>
       </div>
+
+      <ReportChat
+        report={analysis}
+        jobId={jobId}
+        label={`blue analysis — ${analysis.engagement_id || jobId}`}
+      />
 
       <ConfirmDecisionModal
         pending={pendingDecision}

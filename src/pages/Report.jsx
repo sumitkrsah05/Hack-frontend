@@ -34,6 +34,7 @@ import CountUp from "@/components/CountUp";
 import SeverityMeter from "@/components/SeverityMeter";
 import GlitchButton from "@/components/GlitchButton";
 import JSONView from "@/components/JSONView";
+import ReportChat from "@/components/ReportChat";
 
 function StatCard({ icon: Icon, label, children, color = "#00FF9C" }) {
   return (
@@ -583,6 +584,11 @@ export default function Report() {
           <RotateCcw className="w-4 h-4" /> NEW ENGAGEMENT
         </GlitchButton>
       </div>
+
+      <ReportChat
+        report={report || scan?.result || scan}
+        label={`findings report — ${scan?.result?.engagement_id || jobId}`}
+      />
     </div>
   );
 }

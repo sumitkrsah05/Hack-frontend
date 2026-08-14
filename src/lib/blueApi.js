@@ -89,6 +89,14 @@ export const blueApi = {
       asText: true,
     }),
 
+  // Stateless report Q&A: send the transcript back verbatim as `history`
+  // each turn; the response returns the updated history including this turn.
+  chat: (jobId, message, history = []) =>
+    request(`/api/v1/analyses/${encodeURIComponent(jobId)}/chat`, {
+      method: "POST",
+      body: { message, history },
+    }),
+
   deleteAnalysis: (jobId) =>
     request(`/api/v1/analyses/${encodeURIComponent(jobId)}`, {
       method: "DELETE",
