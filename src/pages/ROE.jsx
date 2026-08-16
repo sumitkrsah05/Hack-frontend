@@ -1,11 +1,12 @@
 import React from "react";
 import { ScrollText, ShieldCheck } from "lucide-react";
 import DecryptedText from "@/components/DecryptedText";
+import { alpha } from "@/lib/utils";
 
 const PRIORITY_TONE = {
-  High: { color: "#FF3B4E", bg: "#FF3B4E1A", border: "#FF3B4E40" },
-  Medium: { color: "#FFB020", bg: "#FFB0201A", border: "#FFB02040" },
-  Low: { color: "#22D3EE", bg: "#22D3EE1A", border: "#22D3EE40" },
+  High: { color: "var(--c-red-team)", bg: alpha("var(--c-red-team)", 10), border: alpha("var(--c-red-team)", 25) },
+  Medium: { color: "var(--c-warn)", bg: alpha("var(--c-warn)", 10), border: alpha("var(--c-warn)", 25) },
+  Low: { color: "var(--c-accent)", bg: alpha("var(--c-accent)", 10), border: alpha("var(--c-accent)", 25) },
 };
 
 const REQUIREMENTS = [
@@ -74,7 +75,7 @@ export default function ROE() {
       <h1 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-2 flex items-center gap-3">
         <ScrollText
           className="w-8 h-8 text-primary"
-          style={{ filter: "drop-shadow(0 0 8px rgba(0,255,156,0.5))" }}
+          style={{ filter: "drop-shadow(0 0 8px hsl(var(--primary)/0.5))" }}
         />
         <DecryptedText text="Rules of Engagement & Scope Management" />
       </h1>

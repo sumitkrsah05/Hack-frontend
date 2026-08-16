@@ -74,11 +74,11 @@ export const api = {
 
 // Severity palette + labels shared across the app.
 export const SEVERITY = {
-  critical: { label: "CRITICAL", color: "#FF2E63" },
-  high: { label: "HIGH", color: "#FF6B2C" },
-  medium: { label: "MEDIUM", color: "#FFB020" },
-  low: { label: "LOW", color: "#22D3EE" },
-  info: { label: "INFO", color: "#7A8B8F" },
+  critical: { label: "CRITICAL", color: "var(--c-danger)" },
+  high: { label: "HIGH", color: "var(--c-orange)" },
+  medium: { label: "MEDIUM", color: "var(--c-warn)" },
+  low: { label: "LOW", color: "var(--c-accent)" },
+  info: { label: "INFO", color: "var(--c-info)" },
 };
 
 export const SEVERITY_ORDER = ["critical", "high", "medium", "low", "info"];

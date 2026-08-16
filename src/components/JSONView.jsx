@@ -15,10 +15,10 @@ export default function JSONView({ data, title = "report.json" }) {
         (m, str, colon, bool) => {
           if (str)
             return colon
-              ? `<span style="color:#22D3EE">${str}</span>${colon}`
-              : `<span style="color:#00FF9C">${str}</span>`;
-          if (bool) return `<span style="color:#FFB020">${m}</span>`;
-          return `<span style="color:#FF6B2C">${m}</span>`;
+              ? `<span style="color:var(--c-accent)">${str}</span>${colon}`
+              : `<span style="color:var(--c-primary)">${str}</span>`;
+          if (bool) return `<span style="color:var(--c-warn)">${m}</span>`;
+          return `<span style="color:var(--c-orange)">${m}</span>`;
         }
       );
   }, [data]);

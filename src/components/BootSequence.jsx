@@ -63,7 +63,7 @@ export default function BootSequence({ onDone }) {
             className="h-full bg-primary"
             style={{
               animation: "boot-bar 1.3s ease-out forwards",
-              boxShadow: "0 0 10px rgba(0,255,156,0.7)",
+              boxShadow: "0 0 10px hsl(var(--primary)/0.7)",
             }}
           />
         </div>

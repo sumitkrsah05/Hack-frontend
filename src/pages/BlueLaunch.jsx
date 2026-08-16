@@ -12,14 +12,36 @@ import {
   Cpu,
   ZapOff,
   ArrowRight,
+  Crosshair,
+  Radar,
 } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
 import { blueApi } from "@/lib/blueApi";
 import { useScanStore } from "@/lib/scanStore";
-import { cn } from "@/lib/utils";
+import { cn, alpha } from "@/lib/utils";
 import GlitchButton from "@/components/GlitchButton";
 import DecryptedText from "@/components/DecryptedText";
 import TeamBadge from "@/components/TeamBadge";
+import SiemAnalysis from "@/components/siem/SiemAnalysis";
+
+// Top-level analysis modes: the original Red-report handoff, and the
+// frontend-only SIEM telemetry demo (mock data, no backend calls).
+const ANALYSIS_MODES = [
+  {
+    key: "red",
+    label: "RED TEAM REPORT",
+    icon: Crosshair,
+    color: "var(--c-red-team)",
+    blurb: "Analyze findings from a completed Red Agent engagement.",
+  },
+  {
+    key: "siem",
+    label: "SIEM TELEMETRY",
+    icon: Radar,
+    color: "var(--c-accent)",
+    blurb: "Investigate raw security telemetry from logs or a SIEM platform.",
+  },
+];
 
 const SOURCES = [
   {
@@ -126,7 +148,7 @@ function BackendPanel({ config, error }) {
         </div>
         <span
           className="font-mono text-xs"
-          style={{ color: live ? "#00FF9C" : "#FFB020" }}
+          style={{ color: live ? "var(--c-primary)" : "var(--c-warn)" }}
         >
           {live
             ? `${config.llm.provider} / ${config.llm.model}`
@@ -153,6 +175,10 @@ export default function BlueLaunch() {
   const { history, addAnalysis, apiBase } = useScanStore();
   const fileRef = useRef(null);
 
+  // ?mode=siem deep-links the SIEM demo; a ?scan= param always means red.
+  const [mode, setMode] = useState(
+    params.get("mode") === "siem" && !params.get("scan") ? "siem" : "red"
+  );
   const [source, setSource] = useState("scan");
   const [selectedScan, setSelectedScan] = useState(params.get("scan") || "");
   const [redJobId, setRedJobId] = useState("");
@@ -269,10 +295,10 @@ export default function BlueLaunch() {
 
   const activeSource = SOURCES.find((s) => s.key === source);
 
-  return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
+  const header = (
+    <>
       <TeamBadge
-        color="#22D3EE"
+        color="var(--c-accent)"
         icon={Shield}
         label="BLUE TEAM"
         sub="Detection Correlation Engine"
@@ -282,15 +308,78 @@ export default function BlueLaunch() {
       <h1 className="font-display font-bold text-2xl md:text-3xl mb-1 flex items-center gap-3">
         <Shield
           className="w-7 h-7 text-accent"
-          style={{ filter: "drop-shadow(0 0 8px rgba(34,211,238,0.6))" }}
+          style={{ filter: "drop-shadow(0 0 8px hsl(var(--accent)/0.6))" }}
         />
         <DecryptedText text="Security Telemetry Collection & Normalization Engine" />
       </h1>
       <p className="font-mono text-xs text-muted-foreground mb-6 leading-relaxed">
-        Hand a Red Agent report to the Blue Agent: root cause, business impact,
-        MITRE ATT&amp;CK mapping, prioritised remediation and detection rules —
-        one pass per finding.
+        {mode === "red"
+          ? "Hand a Red Agent report to the Blue Agent: root cause, business impact, MITRE ATT&CK mapping, prioritised remediation and detection rules — one pass per finding."
+          : "Feed raw security telemetry to the Blue Engine: normalization, threat correlation, MITRE ATT&CK mapping, risk scoring and prioritized defensive actions."}
       </p>
+
+      {/* Analysis mode */}
+      <div className="label-xs mb-2">ANALYSIS SOURCE</div>
+      <div className="grid grid-cols-2 gap-2 mb-6">
+        {ANALYSIS_MODES.map((m) => {
+          const active = mode === m.key;
+          return (
+            <button
+              key={m.key}
+              onClick={() => {
+                setMode(m.key);
+                setError(null);
+              }}
+              className={cn(
+                "flex items-start gap-3 px-4 py-3 border rounded-sm text-left transition-all",
+                !active &&
+                  "border-border/25 hover:border-border/50 opacity-70 hover:opacity-100"
+              )}
+              style={
+                active
+                  ? {
+                      borderColor: `${alpha(m.color, 38)}`,
+                      background: `${alpha(m.color, 6)}`,
+                      boxShadow: `0 0 16px ${alpha(m.color, 13)}`,
+                    }
+                  : undefined
+              }
+            >
+              <m.icon
+                className="w-4 h-4 mt-0.5 shrink-0"
+                style={{ color: active ? m.color : undefined }}
+              />
+              <span className="min-w-0">
+                <span
+                  className="block font-mono text-[11px] font-bold uppercase tracking-[0.14em]"
+                  style={{ color: active ? m.color : undefined }}
+                >
+                  {m.label}
+                </span>
+                <span className="block font-mono text-[10px] text-muted-foreground mt-0.5 leading-relaxed">
+                  {m.blurb}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+
+  // SIEM mode is a self-contained, frontend-only workflow (mock data).
+  if (mode === "siem") {
+    return (
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        {header}
+        <SiemAnalysis />
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto px-6 py-10">
+      {header}
 
       <div className="mb-6">
         <BackendPanel config={config} error={configError} />
@@ -544,10 +633,10 @@ export default function BlueLaunch() {
       </div>
 
       {opts.offline && (
-        <div className="mt-4 flex items-start gap-3 p-3 border border-[#FFB020]/30 bg-[#FFB020]/5 rounded-sm">
-          <ZapOff className="w-4 h-4 text-[#FFB020] shrink-0 mt-0.5" />
+        <div className="mt-4 flex items-start gap-3 p-3 border border-severity-medium/30 bg-severity-medium/5 rounded-sm">
+          <ZapOff className="w-4 h-4 text-severity-medium shrink-0 mt-0.5" />
           <p className="font-mono text-[11px] text-foreground/80 leading-relaxed">
-            <span className="text-[#FFB020] font-bold">OFFLINE MODE — </span>
+            <span className="text-severity-medium font-bold">OFFLINE MODE — </span>
             findings will be analysed by the deterministic rule engine. The
             report will be labelled rule-based, not AI analysis.
           </p>

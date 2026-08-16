@@ -116,12 +116,12 @@ export const blueApi = {
 
 // The Blue Agent adds "unknown" to the Red Agent's severity ladder.
 export const BLUE_SEVERITY = {
-  critical: { label: "CRITICAL", color: "#FF2E63" },
-  high: { label: "HIGH", color: "#FF6B2C" },
-  medium: { label: "MEDIUM", color: "#FFB020" },
-  low: { label: "LOW", color: "#22D3EE" },
-  info: { label: "INFO", color: "#7A8B8F" },
-  unknown: { label: "UNKNOWN", color: "#5B6A6E" },
+  critical: { label: "CRITICAL", color: "var(--c-danger)" },
+  high: { label: "HIGH", color: "var(--c-orange)" },
+  medium: { label: "MEDIUM", color: "var(--c-warn)" },
+  low: { label: "LOW", color: "var(--c-accent)" },
+  info: { label: "INFO", color: "var(--c-info)" },
+  unknown: { label: "UNKNOWN", color: "var(--c-info)" },
 };
 
 export const BLUE_SEVERITY_ORDER = [
@@ -134,18 +134,18 @@ export const BLUE_SEVERITY_ORDER = [
 ];
 
 export const PRIORITY = {
-  P0: { label: "P0", color: "#FF2E63", desc: "act now" },
-  P1: { label: "P1", color: "#FF6B2C", desc: "this week" },
-  P2: { label: "P2", color: "#FFB020", desc: "this quarter" },
-  P3: { label: "P3", color: "#22D3EE", desc: "backlog" },
+  P0: { label: "P0", color: "var(--c-danger)", desc: "act now" },
+  P1: { label: "P1", color: "var(--c-orange)", desc: "this week" },
+  P2: { label: "P2", color: "var(--c-warn)", desc: "this quarter" },
+  P3: { label: "P3", color: "var(--c-accent)", desc: "backlog" },
 };
 
 export const PRIORITY_ORDER = ["P0", "P1", "P2", "P3"];
 
 export const HORIZON = {
-  immediate: { label: "IMMEDIATE", color: "#FF2E63" },
-  short_term: { label: "SHORT TERM", color: "#FFB020" },
-  long_term: { label: "LONG TERM", color: "#22D3EE" },
+  immediate: { label: "IMMEDIATE", color: "var(--c-danger)" },
+  short_term: { label: "SHORT TERM", color: "var(--c-warn)" },
+  long_term: { label: "LONG TERM", color: "var(--c-accent)" },
 };
 
 export const HORIZON_ORDER = ["immediate", "short_term", "long_term"];
@@ -153,18 +153,18 @@ export const HORIZON_ORDER = ["immediate", "short_term", "long_term"];
 export const BLUE_STATUSES = ["queued", "running", "completed", "error"];
 
 export function riskColorFor(sev) {
-  return BLUE_SEVERITY[(sev || "unknown").toLowerCase()]?.color || "#7A8B8F";
+  return BLUE_SEVERITY[(sev || "unknown").toLowerCase()]?.color || "var(--c-info)";
 }
 
 // risk_assessment.overall_risk_score is a 0–10 scale (not the Red Agent's 0–100).
 export function riskScoreColor(score) {
   const s = Number(score) || 0;
-  if (s >= 9) return "#FF2E63";
-  if (s >= 7) return "#FF6B2C";
-  if (s >= 4) return "#FFB020";
-  return "#22D3EE";
+  if (s >= 9) return "var(--c-danger)";
+  if (s >= 7) return "var(--c-orange)";
+  if (s >= 4) return "var(--c-warn)";
+  return "var(--c-accent)";
 }
 
 export function priorityColor(p) {
-  return PRIORITY[(p || "").toUpperCase()]?.color || "#7A8B8F";
+  return PRIORITY[(p || "").toUpperCase()]?.color || "var(--c-info)";
 }

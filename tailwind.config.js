@@ -19,6 +19,11 @@ module.exports = {
                 muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
                 accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
                 destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))' },
+                surface: {
+                    0: 'hsl(var(--surface-0))',
+                    1: 'hsl(var(--surface-1))',
+                    2: 'hsl(var(--surface-2))'
+                },
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',

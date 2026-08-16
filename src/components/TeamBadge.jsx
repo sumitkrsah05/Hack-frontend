@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "@/lib/utils";
+import { cn, alpha } from "@/lib/utils";
 
 export default function TeamBadge({ color, icon: Icon, label, sub, className }) {
   return (
@@ -10,8 +10,8 @@ export default function TeamBadge({ color, icon: Icon, label, sub, className }) 
       )}
       style={{
         color,
-        background: `${color}14`,
-        border: `1px solid ${color}40`,
+        background: `${alpha(color, 8)}`,
+        border: `1px solid ${alpha(color, 25)}`,
       }}
     >
       {Icon && <Icon style={{ width: 18, height: 18 }} />}

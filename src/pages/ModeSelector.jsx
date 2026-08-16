@@ -4,6 +4,7 @@ import { Crosshair, Cloud, FileCode2, ArrowRight, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
 import DecryptedText from "@/components/DecryptedText";
 import TeamBadge from "@/components/TeamBadge";
+import { alpha } from "@/lib/utils";
 
 const STATIC_MODES = {
   black_box: {
@@ -12,7 +13,7 @@ const STATIC_MODES = {
     tools: ["nmap", "nuclei", "nikto"],
     provide: "a target URL / host.",
     icon: Crosshair,
-    color: "#00FF9C",
+    color: "var(--c-primary)",
   },
   gray_box: {
     name: "GRAY-BOX",
@@ -20,7 +21,7 @@ const STATIC_MODES = {
     tools: ["prowler", "trivy"],
     provide: "cloud account IDs.",
     icon: Cloud,
-    color: "#22D3EE",
+    color: "var(--c-accent)",
   },
   white_box: {
     name: "WHITE-BOX",
@@ -28,7 +29,7 @@ const STATIC_MODES = {
     tools: ["semgrep", "gitleaks", "checkov", "trivy"],
     provide: "server-side repo paths.",
     icon: FileCode2,
-    color: "#FFB020",
+    color: "var(--c-warn)",
   },
 };
 
@@ -69,7 +70,7 @@ export default function ModeSelector() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
       <TeamBadge
-        color="#FF3B4E"
+        color="var(--c-red-team)"
         icon={Crosshair}
         label="RED TEAM"
         sub="Attack Simulation"
@@ -92,7 +93,7 @@ export default function ModeSelector() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {entries.map(([key, meta], i) => {
             const Icon = meta.icon || Crosshair;
-            const color = meta.color || "#00FF9C";
+            const color = meta.color || "var(--c-primary)";
             return (
               <button
                 key={key}
@@ -103,14 +104,14 @@ export default function ModeSelector() {
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{
-                    background: `radial-gradient(circle at 50% 0%, ${color}15, transparent 70%)`,
+                    background: `radial-gradient(circle at 50% 0%, ${alpha(color, 8)}, transparent 70%)`,
                   }}
                 />
                 <div className="relative">
                   <div className="flex items-center justify-between mb-5">
                     <Icon
                       className="w-8 h-8"
-                      style={{ color, filter: `drop-shadow(0 0 8px ${color}80)` }}
+                      style={{ color, filter: `drop-shadow(0 0 8px ${alpha(color, 50)})` }}
                     />
                     <span className="font-mono text-[9px] text-muted-foreground/50 tracking-widest">
                       0{i + 1}

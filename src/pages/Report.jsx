@@ -29,14 +29,14 @@ import {
   riskLabel,
   downloadJson,
 } from "@/lib/report-utils";
-import { cn } from "@/lib/utils";
+import { cn, alpha } from "@/lib/utils";
 import CountUp from "@/components/CountUp";
 import SeverityMeter from "@/components/SeverityMeter";
 import GlitchButton from "@/components/GlitchButton";
 import JSONView from "@/components/JSONView";
 import ReportChat from "@/components/ReportChat";
 
-function StatCard({ icon: Icon, label, children, color = "#00FF9C" }) {
+function StatCard({ icon: Icon, label, children, color = "var(--c-primary)" }) {
   return (
     <div className="panel p-4">
       <div className="flex items-center gap-2 mb-2">
@@ -63,7 +63,7 @@ function RiskDial({ score }) {
   return (
     <div className="relative w-28 h-28 mx-auto">
       <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-        <circle cx="50" cy="50" r={r} fill="none" stroke="#1b2429" strokeWidth="8" />
+        <circle cx="50" cy="50" r={r} fill="none" stroke="var(--c-track)" strokeWidth="8" />
         <circle
           cx="50"
           cy="50"
@@ -99,18 +99,18 @@ function RadialPct({ pct }) {
   return (
     <div className="relative w-20 h-20 mx-auto">
       <svg viewBox="0 0 80 80" className="w-full h-full -rotate-90">
-        <circle cx="40" cy="40" r={r} fill="none" stroke="#1b2429" strokeWidth="6" />
+        <circle cx="40" cy="40" r={r} fill="none" stroke="var(--c-track)" strokeWidth="6" />
         <circle
           cx="40"
           cy="40"
           r={r}
           fill="none"
-          stroke="#22D3EE"
+          stroke="var(--c-accent)"
           strokeWidth="6"
           strokeLinecap="round"
           strokeDasharray={circ}
           strokeDashoffset={grow ? circ - (v / 100) * circ : circ}
-          style={{ transition: "stroke-dashoffset 1s ease-out", filter: "drop-shadow(0 0 5px #22D3EE)" }}
+          style={{ transition: "stroke-dashoffset 1s ease-out", filter: "drop-shadow(0 0 5px var(--c-accent))" }}
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
@@ -140,12 +140,12 @@ function AttackPaths({ paths = [] }) {
               {path.title && <span className="text-foreground/70 normal-case tracking-normal ml-2">— {path.title}</span>}
             </div>
             <div className="relative pl-6">
-              <div className="absolute left-2 top-1 bottom-1 w-px bg-gradient-to-b from-primary via-accent to-transparent" style={{ boxShadow: "0 0 8px rgba(0,255,156,0.4)" }} />
+              <div className="absolute left-2 top-1 bottom-1 w-px bg-gradient-to-b from-primary via-accent to-transparent" style={{ boxShadow: "0 0 8px hsl(var(--primary)/0.4)" }} />
               {steps.map((step, j) => {
                 const label = typeof step === "string" ? step : step?.title || step?.name || step?.description || JSON.stringify(step);
                 return (
                   <div key={j} className="relative mb-3" style={{ animation: `float-up 0.3s ease-out ${j * 0.08}s both` }}>
-                    <span className="absolute -left-[18px] top-1 w-3 h-3 rounded-full bg-primary border border-background" style={{ boxShadow: "0 0 8px #00FF9C" }} />
+                    <span className="absolute -left-[18px] top-1 w-3 h-3 rounded-full bg-primary border border-background" style={{ boxShadow: "0 0 8px var(--c-primary)" }} />
                     <div className="font-mono text-xs text-foreground/85 leading-relaxed">
                       <span className="text-primary/50 mr-1.5">{String(j + 1).padStart(2, "0")}</span>
                       {label}
@@ -189,7 +189,7 @@ function FindingsTable({ findings = [] }) {
         <span className="label-xs mr-2">FILTER</span>
         {["all", ...SEVERITY_ORDER].map((k) => {
           const active = filter === k;
-          const color = k === "all" ? "#DCE3E5" : SEVERITY[k].color;
+          const color = k === "all" ? "var(--c-chip)" : SEVERITY[k].color;
           return (
             <button
               key={k}
@@ -198,7 +198,7 @@ function FindingsTable({ findings = [] }) {
                 "px-2 py-0.5 border font-mono text-[10px] uppercase tracking-wider rounded-sm transition-all",
                 active ? "bg-secondary" : "border-border/20 hover:border-border/50 text-muted-foreground"
               )}
-              style={active ? { color, borderColor: color + "66" } : {}}
+              style={active ? { color, borderColor: alpha(color, 40) } : {}}
             >
               {k === "all" ? "ALL" : SEVERITY[k].label}
             </button>
@@ -225,7 +225,7 @@ function FindingsTable({ findings = [] }) {
               >
                 <span
                   className="px-2 py-0.5 rounded-sm font-mono text-[10px] uppercase tracking-wider shrink-0"
-                  style={{ color, background: color + "18", border: `1px solid ${color}55` }}
+                  style={{ color, background: alpha(color, 9), border: `1px solid ${alpha(color, 33)}` }}
                 >
                   {sev}
                 </span>
@@ -316,7 +316,7 @@ export default function Report() {
   if (conflict)
     return (
       <div className="max-w-2xl mx-auto px-6 py-20 text-center">
-        <AlertTriangle className="w-10 h-10 text-[#FFB020] mx-auto mb-4" />
+        <AlertTriangle className="w-10 h-10 text-severity-medium mx-auto mb-4" />
         <p className="font-mono text-sm text-foreground mb-2">{">"} report not ready</p>
         <p className="font-mono text-xs text-muted-foreground mb-6">
           engagement is still running — report.json returns 409 until complete.
@@ -393,16 +393,16 @@ export default function Report() {
 
       {/* Summary header */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-        <StatCard icon={Target} label="FINDINGS" color="#00FF9C">
+        <StatCard icon={Target} label="FINDINGS" color="var(--c-primary)">
           <CountUp value={summary.findings || 0} />
         </StatCard>
-        <StatCard icon={Network} label="ATTACK PATHS" color="#22D3EE">
+        <StatCard icon={Network} label="ATTACK PATHS" color="var(--c-accent)">
           <CountUp value={summary.attack_paths || 0} />
         </StatCard>
-        <StatCard icon={CheckCircle2} label="VALIDATIONS" color="#FFB020">
+        <StatCard icon={CheckCircle2} label="VALIDATIONS" color="var(--c-warn)">
           <CountUp value={summary.validations || 0} />
         </StatCard>
-        <StatCard icon={Eye} label="DETECT COVERAGE" color="#22D3EE">
+        <StatCard icon={Eye} label="DETECT COVERAGE" color="var(--c-accent)">
           <CountUp value={summary.detection_coverage_pct || 0} suffix="%" />
         </StatCard>
       </div>
@@ -504,13 +504,13 @@ export default function Report() {
       {/* Gaps */}
       {gaps.length > 0 && (
         <div className="mb-8">
-          <div className="label-xs mb-3 flex items-center gap-2 text-[#FFB020]">
+          <div className="label-xs mb-3 flex items-center gap-2 text-severity-medium">
             <AlertTriangle className="w-3 h-3" /> GAPS
           </div>
           <div className="space-y-2">
             {gaps.map((g, i) => (
-              <div key={i} className="panel p-3 flex items-start gap-2 border-[#FFB020]/20">
-                <span className="text-[#FFB020] font-mono text-xs shrink-0">{">"}</span>
+              <div key={i} className="panel p-3 flex items-start gap-2 border-severity-medium/20">
+                <span className="text-severity-medium font-mono text-xs shrink-0">{">"}</span>
                 <span className="font-mono text-xs text-foreground/80">
                   {typeof g === "string" ? g : g?.title || g?.description || JSON.stringify(g)}
                 </span>
@@ -530,7 +530,7 @@ export default function Report() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <Shield
             className="w-8 h-8 text-accent shrink-0"
-            style={{ filter: "drop-shadow(0 0 8px rgba(34,211,238,0.5))" }}
+            style={{ filter: "drop-shadow(0 0 8px hsl(var(--accent)/0.5))" }}
           />
           <div className="flex-1 min-w-0">
             <div className="label-xs text-accent">BLUE TEAM ANALYSIS</div>

@@ -95,7 +95,7 @@ export default function Landing() {
                 className="block text-5xl sm:text-6xl md:text-7xl 2xl:text-8xl"
                 style={{
                   background:
-                    "linear-gradient(90deg, #FF9933 0%, #FF9933 32%, #FFFFFF 50%, #2EB82C 68%, #2EB82C 100%)",
+                    "linear-gradient(90deg, #FF9933 0%, #FF9933 32%, var(--flag-white) 50%, #2EB82C 68%, #2EB82C 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -148,7 +148,7 @@ export default function Landing() {
       </section>
 
       {/* Feature strip */}
-      <section className="relative border-t border-border/15 bg-[#0B0F11]">
+      <section className="relative border-t border-border/15 bg-surface-0">
         <div className="max-w-5xl mx-auto px-6 py-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
           {FEATURES.map((f, i) => (
             <div
@@ -172,7 +172,7 @@ export default function Landing() {
           {[
             { k: "BLACK-BOX", d: "External / network attack", icon: "▚", c: "text-primary" },
             { k: "GRAY-BOX", d: "Cloud / config assessment", icon: "◈", c: "text-accent" },
-            { k: "WHITE-BOX", d: "Static source analysis", icon: "▤", c: "text-[#FFB020]" },
+            { k: "WHITE-BOX", d: "Static source analysis", icon: "▤", c: "text-severity-medium" },
           ].map((m) => (
             <div
               key={m.k}
@@ -193,7 +193,7 @@ export default function Landing() {
       {/* Kavach — active defense layer */}
       <section className="relative border-t border-border/15 overflow-hidden">
         <div className="absolute inset-0 dot-bg opacity-60" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,255,156,0.06),transparent_65%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06),transparent_65%)]" />
 
         <div className="relative max-w-5xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-6 items-center">
           {/* Copy */}
@@ -252,7 +252,7 @@ export default function Landing() {
       </section>
 
       {/* Blue team handoff */}
-      <section className="border-t border-border/15 bg-[#0B0F11]">
+      <section className="border-t border-border/15 bg-surface-0">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <div className="label-xs mb-6 text-accent">// THEN, THE BLUE SIDE</div>
           <div className="flex flex-col md:flex-row md:items-center gap-8">

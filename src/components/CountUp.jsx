@@ -7,6 +7,7 @@ export default function CountUp({
   className,
   suffix = "",
   style,
+  format,
 }) {
   const reduced = usePrefersReducedMotion();
   const [display, setDisplay] = useState(reduced ? value : 0);
@@ -36,7 +37,7 @@ export default function CountUp({
   const decimals = isInt ? 0 : Number(value.toFixed(1)) % 1 === 0 ? 0 : 1;
   return (
     <span className={className} style={style}>
-      {display.toFixed(decimals)}
+      {format ? format(display) : display.toFixed(decimals)}
       {suffix}
     </span>
   );

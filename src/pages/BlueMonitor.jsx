@@ -167,7 +167,7 @@ export default function BlueMonitor() {
         <ProgressBar
           percent={percent}
           indeterminate={active && !total}
-          color="#22D3EE"
+          color="var(--c-accent)"
         />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-5">
           {[

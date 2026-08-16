@@ -1,12 +1,12 @@
 export function severityColor(sev) {
   const map = {
-    critical: "#FF2E63",
-    high: "#FF6B2C",
-    medium: "#FFB020",
-    low: "#22D3EE",
-    info: "#7A8B8F",
+    critical: "var(--c-danger)",
+    high: "var(--c-orange)",
+    medium: "var(--c-warn)",
+    low: "var(--c-accent)",
+    info: "var(--c-info)",
   };
-  return map[(sev || "").toLowerCase()] || "#7A8B8F";
+  return map[(sev || "").toLowerCase()] || "var(--c-info)";
 }
 
 export function severityLabel(sev) {
@@ -15,10 +15,10 @@ export function severityLabel(sev) {
 
 export function riskColor(score) {
   const s = Number(score) || 0;
-  if (s >= 70) return "#FF2E63";
-  if (s >= 40) return "#FF6B2C";
-  if (s >= 20) return "#FFB020";
-  return "#22D3EE";
+  if (s >= 70) return "var(--c-danger)";
+  if (s >= 40) return "var(--c-orange)";
+  if (s >= 20) return "var(--c-warn)";
+  return "var(--c-accent)";
 }
 
 export function riskLabel(score) {

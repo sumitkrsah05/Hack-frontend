@@ -11,11 +11,14 @@ import {
   ScrollText,
   Blend,
   Menu,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { blueApi, BLUE_DEFAULT_BASE } from "@/lib/blueApi";
 import { useScanStore } from "@/lib/scanStore";
-import { cn } from "@/lib/utils";
+import { useTheme } from "@/lib/theme.jsx";
+import { cn, alpha } from "@/lib/utils";
 import BootSequence from "@/components/BootSequence";
 import ScanlineSweep from "@/components/ScanlineSweep";
 
@@ -144,26 +147,44 @@ function ApiBaseEditor({ label, value, onSave, fallback, accentClass }) {
   );
 }
 
+function ThemeToggle({ className }) {
+  const { theme, toggle } = useTheme();
+  const dark = theme === "dark";
+  return (
+    <button
+      onClick={toggle}
+      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      title={dark ? "Light theme" : "Dark theme"}
+      className={cn(
+        "flex items-center justify-center w-9 h-9 rounded-sm border border-border/30 bg-surface-0 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors",
+        className
+      )}
+    >
+      {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+    </button>
+  );
+}
+
 function NavGroup({ team, items, pathname, onNavigate }) {
   const { color, label, sub, Icon } = team;
   return (
     <div
       className="rounded-md border overflow-hidden"
       style={{
-        borderColor: `${color}33`,
-        background: `linear-gradient(180deg, ${color}0D, transparent 60%)`,
+        borderColor: `${alpha(color, 20)}`,
+        background: `linear-gradient(180deg, ${alpha(color, 5)}, transparent 60%)`,
       }}
     >
       {/* Team header */}
       <div
         className="flex items-center gap-2.5 px-3 py-2.5 border-b"
-        style={{ borderColor: `${color}22`, background: `${color}0F` }}
+        style={{ borderColor: `${alpha(color, 13)}`, background: `${alpha(color, 6)}` }}
       >
         <span
           className="flex items-center justify-center w-7 h-7 rounded-sm shrink-0"
           style={{
-            background: `${color}1A`,
-            border: `1px solid ${color}40`,
+            background: `${alpha(color, 10)}`,
+            border: `1px solid ${alpha(color, 25)}`,
           }}
         >
           <Icon className="w-4 h-4" style={{ color }} />
@@ -199,8 +220,8 @@ function NavGroup({ team, items, pathname, onNavigate }) {
                 active
                   ? {
                       color,
-                      background: `${color}14`,
-                      boxShadow: `inset 0 0 0 1px ${color}40`,
+                      background: `${alpha(color, 8)}`,
+                      boxShadow: `inset 0 0 0 1px ${alpha(color, 25)}`,
                     }
                   : undefined
               }
@@ -277,7 +298,7 @@ export default function Layout() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed lg:static z-40 inset-y-0 left-0 w-60 shrink-0 bg-[#0B0F11] border-r border-border/15 flex flex-col transition-all duration-300",
+          "fixed lg:static z-40 inset-y-0 left-0 w-60 shrink-0 bg-surface-0 border-r border-border/15 flex flex-col transition-all duration-300",
           mobileNav ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
           collapsed && "lg:-translate-x-full lg:-ml-60"
         )}
@@ -317,14 +338,14 @@ export default function Layout() {
               />
             </span>
             {/* Live status pip */}
-            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-[#0B0F11] animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-surface-0 animate-pulse" />
           </span>
 
           <div className="leading-none relative">
             <div className="font-display font-extrabold text-[15px] tracking-tight">
               <span
                 style={{
-                  background: "linear-gradient(90deg, #FF9933, #FFFFFF 55%)",
+                  background: "linear-gradient(90deg, #FF9933, var(--flag-white) 55%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -334,7 +355,7 @@ export default function Layout() {
               </span>
               <span
                 style={{
-                  background: "linear-gradient(90deg, #FFFFFF 45%, #2EB82C)",
+                  background: "linear-gradient(90deg, var(--flag-white) 45%, #2EB82C)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -365,7 +386,7 @@ export default function Layout() {
         <nav className="flex-1 p-3 space-y-3 overflow-y-auto">
           <NavGroup
             team={{
-              color: "#FF3B4E",
+              color: "var(--c-red-team)",
               label: "RED TEAM",
               sub: "Offense · Attack Sim",
               Icon: Crosshair,
@@ -376,7 +397,7 @@ export default function Layout() {
           />
           <NavGroup
             team={{
-              color: "#22D3EE",
+              color: "var(--c-accent)",
               label: "BLUE TEAM",
               sub: "Defense · Detection",
               Icon: Shield,
@@ -387,7 +408,7 @@ export default function Layout() {
           />
           <NavGroup
             team={{
-              color: "#D946EF",
+              color: "var(--c-purple)",
               label: "PURPLE TEAM",
               sub: "Correlation · Analysis",
               Icon: Blend,
@@ -398,7 +419,7 @@ export default function Layout() {
           />
           <NavGroup
             team={{
-              color: "#A78BFA",
+              color: "var(--c-violet)",
               label: "GOVERNANCE",
               sub: "Authorization · Scope",
               Icon: ScrollText,
@@ -451,7 +472,7 @@ export default function Layout() {
           onClick={() => setCollapsed(false)}
           aria-label="Open sidebar"
           title="Open sidebar"
-          className="hidden lg:flex fixed top-4 left-4 z-40 items-center justify-center w-9 h-9 rounded-sm border border-border/30 bg-[#0B0F11] text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+          className="hidden lg:flex fixed top-4 left-4 z-40 items-center justify-center w-9 h-9 rounded-sm border border-border/30 bg-surface-0 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
         >
           <Menu className="w-4 h-4" />
         </button>
@@ -459,7 +480,7 @@ export default function Layout() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden flex items-center justify-between h-14 px-4 border-b border-border/15 bg-[#0B0F11]">
+        <header className="lg:hidden flex items-center justify-between h-14 px-4 border-b border-border/15 bg-surface-0">
           <button
             onClick={() => setMobileNav((n) => !n)}
             className="font-mono text-xs text-primary uppercase tracking-wider"
@@ -471,8 +492,11 @@ export default function Layout() {
             <span className="text-muted-foreground">/</span>
             <span className="text-accent">Blue</span>
           </span>
-          <span className="w-8" />
+          <ThemeToggle className="w-8 h-8" />
         </header>
+
+        {/* Theme toggle (desktop, top-right) */}
+        <ThemeToggle className="hidden lg:flex fixed top-4 right-4 z-40" />
 
         <main className="relative flex-1 grid-bg overflow-y-auto">
           <ScanlineSweep trigger={location.pathname} />

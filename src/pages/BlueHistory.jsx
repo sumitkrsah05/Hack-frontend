@@ -5,7 +5,6 @@ import {
   Clock,
   Loader2,
   RefreshCw,
-  Shield,
   Trash2,
   AlertTriangle,
   Blend,
@@ -13,7 +12,7 @@ import {
 import TeamBadge from "@/components/TeamBadge";
 import { blueApi, riskColorFor } from "@/lib/blueApi";
 import { useScanStore } from "@/lib/scanStore";
-import { cn } from "@/lib/utils";
+import { cn, alpha } from "@/lib/utils";
 import StatusBadge from "@/components/StatusBadge";
 import ProgressBar from "@/components/ProgressBar";
 
@@ -85,7 +84,7 @@ export default function BlueHistory() {
       <div className="flex items-start justify-between gap-4 mb-1">
         <div>
           <TeamBadge
-            color="#D946EF"
+            color="var(--c-purple)"
             icon={Blend}
             label="PURPLE TEAM"
             sub="Correlation · Analysis"
@@ -180,8 +179,8 @@ export default function BlueHistory() {
                       className="px-2 py-0.5 rounded-sm font-mono text-[10px] uppercase tracking-wider shrink-0 hidden sm:block"
                       style={{
                         color,
-                        background: color + "18",
-                        border: `1px solid ${color}55`,
+                        background: alpha(color, 9),
+                        border: `1px solid ${alpha(color, 33)}`,
                       }}
                     >
                       {a.overall_risk}

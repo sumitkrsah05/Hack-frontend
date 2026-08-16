@@ -21,7 +21,7 @@ function Radar({ active }) {
         className="radar-sweep absolute inset-0 rounded-full"
         style={{
           background:
-            "conic-gradient(from 0deg, rgba(0,255,156,0.35), transparent 90deg)",
+            "conic-gradient(from 0deg, hsl(var(--primary)/0.35), transparent 90deg)",
           maskImage: "radial-gradient(circle, black 60%, transparent 70%)",
           WebkitMaskImage: "radial-gradient(circle, black 60%, transparent 70%)",
         }}

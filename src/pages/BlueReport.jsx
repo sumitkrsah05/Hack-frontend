@@ -38,7 +38,7 @@ import {
 import { useScanStore } from "@/lib/scanStore";
 import { useCopy } from "@/lib/hooks";
 import { downloadJson } from "@/lib/report-utils";
-import { cn } from "@/lib/utils";
+import { cn, alpha } from "@/lib/utils";
 import CountUp from "@/components/CountUp";
 import SeverityMeter from "@/components/SeverityMeter";
 import GlitchButton from "@/components/GlitchButton";
@@ -92,7 +92,7 @@ function ConfirmDecisionModal({ pending, onConfirm, onCancel }) {
 
   if (!pending) return null;
   const accepting = pending.value === "accepted";
-  const color = accepting ? "#00FF9C" : "#FF2E63";
+  const color = accepting ? "var(--c-primary)" : "var(--c-danger)";
   const Icon = accepting ? Check : X;
   return createPortal(
     <div
@@ -102,7 +102,7 @@ function ConfirmDecisionModal({ pending, onConfirm, onCancel }) {
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       <div
         className="panel relative w-full max-w-sm p-5"
-        style={{ borderColor: color + "55", animation: "float-up 0.15s ease-out both" }}
+        style={{ borderColor: alpha(color, 33), animation: "float-up 0.15s ease-out both" }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 mb-3">
@@ -129,7 +129,7 @@ function ConfirmDecisionModal({ pending, onConfirm, onCancel }) {
           <button
             onClick={onConfirm}
             className="px-3 py-1.5 border rounded-sm font-mono text-[11px] uppercase tracking-wider transition-all"
-            style={{ color, borderColor: color + "66", background: color + "18" }}
+            style={{ color, borderColor: alpha(color, 40), background: alpha(color, 9) }}
           >
             {accepting ? "accept" : "reject"}
           </button>
@@ -152,7 +152,7 @@ function DecisionButton({ active, color, icon: Icon, label, onClick }) {
       )}
       style={
         active
-          ? { color, borderColor: color + "66", background: color + "18" }
+          ? { color, borderColor: alpha(color, 40), background: alpha(color, 9) }
           : {}
       }
     >
@@ -161,7 +161,7 @@ function DecisionButton({ active, color, icon: Icon, label, onClick }) {
   );
 }
 
-function StatCard({ icon: Icon, label, children, color = "#22D3EE", sub }) {
+function StatCard({ icon: Icon, label, children, color = "var(--c-accent)", sub }) {
   return (
     <div className="panel p-4">
       <div className="flex items-center gap-2 mb-2">
@@ -180,19 +180,19 @@ function StatCard({ icon: Icon, label, children, color = "#22D3EE", sub }) {
   );
 }
 
-function Pill({ children, color = "#22D3EE", title }) {
+function Pill({ children, color = "var(--c-accent)", title }) {
   return (
     <span
       title={title}
       className="px-2 py-0.5 rounded-sm font-mono text-[10px] uppercase tracking-wider whitespace-nowrap"
-      style={{ color, background: color + "18", border: `1px solid ${color}55` }}
+      style={{ color, background: alpha(color, 9), border: `1px solid ${alpha(color, 33)}` }}
     >
       {children}
     </span>
   );
 }
 
-function Section({ icon: Icon, title, color = "#22D3EE", children }) {
+function Section({ icon: Icon, title, color = "var(--c-accent)", children }) {
   return (
     <div className="mb-8">
       <div className="label-xs mb-3 flex items-center gap-2" style={{ color }}>
@@ -203,7 +203,7 @@ function Section({ icon: Icon, title, color = "#22D3EE", children }) {
   );
 }
 
-function Bullets({ items = [], color = "#22D3EE", decisions, onDecide, decideKey }) {
+function Bullets({ items = [], color = "var(--c-accent)", decisions, onDecide, decideKey }) {
   if (!items.length)
     return (
       <div className="font-mono text-xs text-muted-foreground">{">"} none</div>
@@ -233,14 +233,14 @@ function Bullets({ items = [], color = "#22D3EE", decisions, onDecide, decideKey
               <span className="flex gap-1.5 shrink-0 ml-auto">
                 <DecisionButton
                   active={false}
-                  color="#00FF9C"
+                  color="var(--c-primary)"
                   icon={Check}
                   label="Accept"
                   onClick={() => onDecide(key, "accepted")}
                 />
                 <DecisionButton
                   active={false}
-                  color="#FF2E63"
+                  color="var(--c-danger)"
                   icon={X}
                   label="Reject"
                   onClick={() => onDecide(key, "rejected")}
@@ -249,7 +249,7 @@ function Bullets({ items = [], color = "#22D3EE", decisions, onDecide, decideKey
             )}
             {key && decision === "accepted" && (
               <span className="shrink-0 ml-auto">
-                <Pill color="#00FF9C" title="accepted">
+                <Pill color="var(--c-primary)" title="accepted">
                   <Check className="w-3 h-3 inline mr-1 -mt-px" />
                   action performed
                 </Pill>
@@ -346,7 +346,7 @@ function Finding({ finding, index, decisions, onDecide }) {
         )}
         {heuristic && (
           <span className="hidden md:block">
-            <Pill color="#FFB020" title="analysed by the rule engine">
+            <Pill color="var(--c-warn)" title="analysed by the rule engine">
               rules
             </Pill>
           </span>
@@ -384,10 +384,10 @@ function Finding({ finding, index, decisions, onDecide }) {
               <div className="label-xs mb-2">ROOT CAUSE</div>
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 {finding.root_cause.primary && (
-                  <Pill color="#FF6B2C">{finding.root_cause.primary}</Pill>
+                  <Pill color="var(--c-orange)">{finding.root_cause.primary}</Pill>
                 )}
                 {(finding.root_cause.categories || []).map((c) => (
-                  <Pill key={c} color="#7A8B8F">
+                  <Pill key={c} color="var(--c-info)">
                     {c}
                   </Pill>
                 ))}
@@ -410,7 +410,7 @@ function Finding({ finding, index, decisions, onDecide }) {
             <div className="label-xs mb-2">MITRE ATT&amp;CK</div>
             <div className="flex flex-wrap gap-2 mb-2">
               {(mitre.tactics || []).map((t) => (
-                <Pill key={t} color="#22D3EE">
+                <Pill key={t} color="var(--c-accent)">
                   {t}
                 </Pill>
               ))}
@@ -431,7 +431,7 @@ function Finding({ finding, index, decisions, onDecide }) {
                     <span className="font-mono text-xs text-foreground">
                       {t.name}
                     </span>
-                    {t.tactic && <Pill color="#7A8B8F">{t.tactic}</Pill>}
+                    {t.tactic && <Pill color="var(--c-info)">{t.tactic}</Pill>}
                   </div>
                   <p className="font-mono text-[11px] text-foreground/70 leading-relaxed">
                     {t.rationale}
@@ -453,9 +453,9 @@ function Finding({ finding, index, decisions, onDecide }) {
                 score {risk.overall_risk_score ?? "—"} / 10
               </Pill>
               {risk.likelihood && (
-                <Pill color="#7A8B8F">likelihood: {risk.likelihood}</Pill>
+                <Pill color="var(--c-info)">likelihood: {risk.likelihood}</Pill>
               )}
-              {risk.impact && <Pill color="#7A8B8F">impact: {risk.impact}</Pill>}
+              {risk.impact && <Pill color="var(--c-info)">impact: {risk.impact}</Pill>}
               {risk.priority && (
                 <Pill color={priorityColor(risk.priority)}>
                   {risk.priority} — {PRIORITY[risk.priority]?.desc || ""}
@@ -476,7 +476,7 @@ function Finding({ finding, index, decisions, onDecide }) {
                     : []),
                 ].map((group) => (
                   <div key={group.horizon}>
-                    <Pill color={HORIZON[group.horizon]?.color || "#7A8B8F"}>
+                    <Pill color={HORIZON[group.horizon]?.color || "var(--c-info)"}>
                       {HORIZON[group.horizon]?.label || group.horizon}
                     </Pill>
                     <div className="mt-2 space-y-2">
@@ -489,9 +489,9 @@ function Finding({ finding, index, decisions, onDecide }) {
                             className={cn(
                               "border rounded-sm p-3 transition-colors",
                               decision === "accepted"
-                                ? "border-[#00FF9C]/40 bg-[#00FF9C]/[0.04]"
+                                ? "border-primary/40 bg-primary/[0.04]"
                                 : decision === "rejected"
-                                  ? "border-[#FF2E63]/40 bg-[#FF2E63]/[0.04] opacity-70"
+                                  ? "border-destructive/40 bg-destructive/[0.04] opacity-70"
                                   : "border-border/20"
                             )}
                           >
@@ -503,14 +503,14 @@ function Finding({ finding, index, decisions, onDecide }) {
                                 <div className="flex gap-1.5 shrink-0">
                                   <DecisionButton
                                     active={false}
-                                    color="#00FF9C"
+                                    color="var(--c-primary)"
                                     icon={Check}
                                     label="Accept"
                                     onClick={() => onDecide(recKey, "accepted")}
                                   />
                                   <DecisionButton
                                     active={false}
-                                    color="#FF2E63"
+                                    color="var(--c-danger)"
                                     icon={X}
                                     label="Reject"
                                     onClick={() => onDecide(recKey, "rejected")}
@@ -519,7 +519,7 @@ function Finding({ finding, index, decisions, onDecide }) {
                               )}
                               {decision === "accepted" && (
                                 <div className="shrink-0">
-                                  <Pill color="#00FF9C" title="accepted">
+                                  <Pill color="var(--c-primary)" title="accepted">
                                     <Check className="w-3 h-3 inline mr-1 -mt-px" />
                                     action performed
                                   </Pill>
@@ -527,9 +527,9 @@ function Finding({ finding, index, decisions, onDecide }) {
                               )}
                             </div>
                             <div className="flex flex-wrap gap-2 mt-2">
-                              {r.category && <Pill color="#7A8B8F">{r.category}</Pill>}
+                              {r.category && <Pill color="var(--c-info)">{r.category}</Pill>}
                               {r.effort && (
-                                <Pill color="#7A8B8F">effort: {r.effort}</Pill>
+                                <Pill color="var(--c-info)">effort: {r.effort}</Pill>
                               )}
                             </div>
                             {r.rationale && (
@@ -681,7 +681,7 @@ export default function BlueReport() {
   if (notReady)
     return (
       <div className="max-w-2xl mx-auto px-6 py-20 text-center">
-        <AlertTriangle className="w-10 h-10 text-[#FFB020] mx-auto mb-4" />
+        <AlertTriangle className="w-10 h-10 text-severity-medium mx-auto mb-4" />
         <p className="font-mono text-sm text-foreground mb-2">
           {">"} analysis not complete (status: {job?.status || "unknown"})
         </p>
@@ -742,9 +742,9 @@ export default function BlueReport() {
           className="inline-flex items-center gap-2 px-3 py-1.5 border rounded-sm font-mono text-[11px] uppercase tracking-[0.16em] shrink-0"
           style={{
             color: riskColor,
-            borderColor: riskColor + "80",
-            background: riskColor + "0D",
-            boxShadow: `0 0 16px ${riskColor}40`,
+            borderColor: alpha(riskColor, 50),
+            background: alpha(riskColor, 5),
+            boxShadow: `0 0 16px ${alpha(riskColor, 25)}`,
           }}
         >
           <Shield className="w-4 h-4" />
@@ -753,10 +753,10 @@ export default function BlueReport() {
       </div>
 
       {meta.degraded && (
-        <div className="mb-6 p-3 border border-[#FFB020]/40 bg-[#FFB020]/5 rounded-sm flex items-start gap-2.5">
-          <AlertTriangle className="w-4 h-4 text-[#FFB020] shrink-0 mt-0.5" />
+        <div className="mb-6 p-3 border border-severity-medium/40 bg-severity-medium/5 rounded-sm flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-severity-medium shrink-0 mt-0.5" />
           <p className="font-mono text-[11px] text-foreground/80 leading-relaxed">
-            <span className="text-[#FFB020] font-bold">
+            <span className="text-severity-medium font-bold">
               RULE-BASED ANALYSIS —{" "}
             </span>
             the LLM was unavailable, so {meta.heuristic_analysed ?? "some"} of{" "}
@@ -768,13 +768,13 @@ export default function BlueReport() {
 
       {/* Headline numbers */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-        <StatCard icon={Target} label="FINDINGS" color="#22D3EE">
+        <StatCard icon={Target} label="FINDINGS" color="var(--c-accent)">
           <CountUp value={summary.total_findings || findings.length} />
         </StatCard>
         <StatCard
           icon={Siren}
           label="IMMEDIATE ACTIONS"
-          color="#FF2E63"
+          color="var(--c-danger)"
           sub="do these first"
         >
           <CountUp value={summary.immediate_actions || 0} />
@@ -820,7 +820,7 @@ export default function BlueReport() {
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(summary.mitre_tactics_observed || []).map((t) => (
-              <Pill key={t} color="#22D3EE">
+              <Pill key={t} color="var(--c-accent)">
                 {t}
               </Pill>
             ))}
@@ -842,14 +842,14 @@ export default function BlueReport() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <div className="label-xs mb-2 text-[#FF6B2C]">TOP RISKS</div>
-              <Bullets items={exec.top_risks} color="#FF6B2C" />
+              <div className="label-xs mb-2 text-severity-high">TOP RISKS</div>
+              <Bullets items={exec.top_risks} color="var(--c-orange)" />
             </div>
             <div>
               <div className="label-xs mb-2 text-destructive">
                 MOST DANGEROUS FINDINGS
               </div>
-              <Bullets items={exec.most_dangerous_findings} color="#FF2E63" />
+              <Bullets items={exec.most_dangerous_findings} color="var(--c-danger)" />
             </div>
           </div>
           <div>
@@ -858,7 +858,7 @@ export default function BlueReport() {
             </div>
             <Bullets
               items={exec.recommended_next_steps}
-              color="#00FF9C"
+              color="var(--c-primary)"
               // decisions={recDecisions}
               // onDecide={decideRec}
               // decideKey="exec::next_steps"
@@ -912,7 +912,7 @@ export default function BlueReport() {
             <span className="label-xs mr-1">SEVERITY</span>
             {["all", ...BLUE_SEVERITY_ORDER].map((k) => {
               const active = sevFilter === k;
-              const color = k === "all" ? "#DCE3E5" : BLUE_SEVERITY[k].color;
+              const color = k === "all" ? "var(--c-chip)" : BLUE_SEVERITY[k].color;
               return (
                 <button
                   key={k}
@@ -923,7 +923,7 @@ export default function BlueReport() {
                       ? "bg-secondary"
                       : "border-border/20 hover:border-border/50 text-muted-foreground"
                   )}
-                  style={active ? { color, borderColor: color + "66" } : {}}
+                  style={active ? { color, borderColor: alpha(color, 40) } : {}}
                 >
                   {k === "all" ? "ALL" : BLUE_SEVERITY[k].label}
                 </button>
@@ -934,7 +934,7 @@ export default function BlueReport() {
             <span className="label-xs mr-1">PRIORITY</span>
             {["all", ...PRIORITY_ORDER].map((k) => {
               const active = prioFilter === k;
-              const color = k === "all" ? "#DCE3E5" : PRIORITY[k].color;
+              const color = k === "all" ? "var(--c-chip)" : PRIORITY[k].color;
               return (
                 <button
                   key={k}
@@ -945,7 +945,7 @@ export default function BlueReport() {
                       ? "bg-secondary"
                       : "border-border/20 hover:border-border/50 text-muted-foreground"
                   )}
-                  style={active ? { color, borderColor: color + "66" } : {}}
+                  style={active ? { color, borderColor: alpha(color, 40) } : {}}
                 >
                   {k === "all" ? "ALL" : k}
                 </button>

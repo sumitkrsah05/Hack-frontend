@@ -20,7 +20,7 @@ export default function TerminalLog({ lines = [], active = false }) {
               : l.type === "success"
               ? "text-primary"
               : l.type === "warn"
-              ? "text-[#FFB020]"
+              ? "text-severity-medium"
               : "text-muted-foreground"
           }
           style={{ animation: "float-up 0.3s ease-out both" }}

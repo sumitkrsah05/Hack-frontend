@@ -158,7 +158,7 @@ export default function ReportChat({ report, label = "report", jobId }) {
         <button
           onClick={() => setOpen(true)}
           title="ask about this report"
-          className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 px-4 py-2.5 rounded-sm border border-accent/50 bg-[#0F1419] font-mono text-[11px] uppercase tracking-[0.14em] text-accent glow-accent hover:bg-accent/10 transition-all"
+          className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 px-4 py-2.5 rounded-sm border border-accent/50 bg-surface-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent glow-accent hover:bg-accent/10 transition-all"
         >
           <MessageSquareText className="w-4 h-4" /> ASK REPORT
         </button>
@@ -176,7 +176,7 @@ export default function ReportChat({ report, label = "report", jobId }) {
       <aside
         className={cn(
           "fixed inset-y-0 right-0 z-40 h-dvh w-full sm:w-[380px] flex flex-col",
-          "bg-[#0F1419] border-l border-border/25 shadow-[0_0_32px_rgba(0,0,0,0.6)]",
+          "bg-surface-1 border-l border-border/25 shadow-[0_0_32px_rgba(0,0,0,0.6)]",
           "transition-transform duration-200 ease-out",
           open ? "translate-x-0" : "translate-x-full"
         )}

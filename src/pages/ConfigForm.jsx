@@ -17,7 +17,7 @@ import DecryptedText from "@/components/DecryptedText";
 const MODE_META = {
   black_box: {
     name: "BLACK-BOX",
-    color: "#00FF9C",
+    color: "var(--c-primary)",
     fields: [
       { key: "target", label: "TARGET", required: true, type: "text", placeholder: "https://demo.testfire.net or 10.0.0.5:8080" },
       { key: "exclusions_hosts", label: "EXCLUSIONS // HOSTS", type: "chips", placeholder: "10.0.0.1" },
@@ -26,7 +26,7 @@ const MODE_META = {
   },
   gray_box: {
     name: "GRAY-BOX",
-    color: "#22D3EE",
+    color: "var(--c-accent)",
     fields: [
       { key: "cloud_accounts", label: "CLOUD ACCOUNTS", required: true, type: "chips", placeholder: "123456789012" },
       { key: "domains", label: "DOMAINS", type: "chips", placeholder: "corp.example" },
@@ -35,7 +35,7 @@ const MODE_META = {
   },
   white_box: {
     name: "WHITE-BOX",
-    color: "#FFB020",
+    color: "var(--c-warn)",
     fields: [
       { key: "repos", label: "REPO PATHS", required: true, type: "chips", placeholder: "/srv/checkouts/my-app" },
     ],
@@ -59,7 +59,7 @@ function Field({ label, required, children, error, hint }) {
       </label>
       {children}
       {hint && (
-        <p className="mt-1.5 font-mono text-[11px] text-[#FFB020]/80 flex items-start gap-1.5">
+        <p className="mt-1.5 font-mono text-[11px] text-severity-medium/80 flex items-start gap-1.5">
           <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
           {hint}
         </p>
@@ -304,10 +304,10 @@ export default function ConfigForm() {
         </div>
 
         {/* ROE banner */}
-        <div className="flex items-start gap-3 p-3 border border-[#FFB020]/30 bg-[#FFB020]/5 rounded-sm">
-          <AlertTriangle className="w-4 h-4 text-[#FFB020] shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-3 border border-severity-medium/30 bg-severity-medium/5 rounded-sm">
+          <AlertTriangle className="w-4 h-4 text-severity-medium shrink-0 mt-0.5" />
           <p className="font-mono text-[11px] text-foreground/80 leading-relaxed">
-            <span className="text-[#FFB020] font-bold">ROE NOTICE — </span>
+            <span className="text-severity-medium font-bold">ROE NOTICE — </span>
             Only submit targets you are authorized to test. Every engagement is
             recorded in a tamper-evident audit chain.
           </p>

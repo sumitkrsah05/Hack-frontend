@@ -20,7 +20,7 @@ export default function SeverityMeter({
     .map((k) => ({
       key: k,
       label: palette[k]?.label || String(k).toUpperCase(),
-      color: palette[k]?.color || "#7A8B8F",
+      color: palette[k]?.color || "var(--c-info)",
       value: counts[k] || 0,
     }))
     .filter((e) => !hideEmpty || e.value > 0);

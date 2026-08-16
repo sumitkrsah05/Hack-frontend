@@ -30,13 +30,18 @@ export default function MatrixRain({ className }) {
     ro.observe(canvas);
 
     const draw = () => {
-      ctx.fillStyle = "rgba(10,14,15,0.08)";
+      // canvas can't resolve CSS variables — pick per-theme colors each frame
+      const light = document.documentElement.classList.contains("light");
+      ctx.fillStyle = light ? "rgba(242,246,247,0.08)" : "rgba(10,14,15,0.08)";
       ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
       ctx.font = "12px JetBrains Mono, monospace";
       const fontSize = 13;
       drops.forEach((y, i) => {
         const c = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillStyle = Math.random() > 0.975 ? "#22D3EE" : "#00FF9C";
+        ctx.fillStyle =
+          Math.random() > 0.975
+            ? light ? "#0891B2" : "#22D3EE"
+            : light ? "#00875A" : "#00FF9C";
         ctx.fillText(c, i * fontSize, y);
         drops[i] =
           y > canvas.offsetHeight && Math.random() > 0.975

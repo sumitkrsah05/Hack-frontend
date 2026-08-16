@@ -5,7 +5,7 @@ import React from "react";
 export default function ProgressBar({
   percent,
   indeterminate = false,
-  color = "#22D3EE",
+  color = "var(--c-accent)",
 }) {
   const pct = Math.max(0, Math.min(100, Number(percent) || 0));
   return (
