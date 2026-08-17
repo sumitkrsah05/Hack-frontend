@@ -91,7 +91,7 @@ export default function Landing() {
 
             <h1 className="font-display font-extrabold tracking-tight leading-none">
               <DecryptedText
-                text="SWARAJ CHAKRA"
+                text="SWARAJ TRISHUL"
                 className="block text-5xl sm:text-6xl md:text-7xl 2xl:text-8xl"
                 style={{
                   background:

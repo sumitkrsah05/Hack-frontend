@@ -7,7 +7,7 @@ import {
   RefreshCw,
   Trash2,
   AlertTriangle,
-  Blend,
+  Shield,
 } from "lucide-react";
 import TeamBadge from "@/components/TeamBadge";
 import { blueApi, riskColorFor } from "@/lib/blueApi";
@@ -84,10 +84,10 @@ export default function BlueHistory() {
       <div className="flex items-start justify-between gap-4 mb-1">
         <div>
           <TeamBadge
-            color="var(--c-purple)"
-            icon={Blend}
-            label="PURPLE TEAM"
-            sub="Correlation · Analysis"
+            color="var(--c-accent)"
+            icon={Shield}
+            label="BLUE TEAM"
+            sub="Defense · Detection"
             className="mb-3"
           />
           <div className="label-xs mb-3 text-accent"></div>

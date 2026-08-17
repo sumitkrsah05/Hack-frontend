@@ -9,7 +9,6 @@ import {
   Shield,
   Stethoscope,
   ScrollText,
-  Blend,
   Menu,
   Sun,
   Moon,
@@ -45,9 +44,6 @@ const BLUE_NAV = [
     icon: Shield,
     match: (p) => p === "/blue" || p.startsWith("/blue/monitor"),
   },
-];
-
-const PURPLE_NAV = [
   {
     to: "/blue/history",
     label: "Analyses",
@@ -361,7 +357,7 @@ export default function Layout() {
                   backgroundClip: "text",
                 }}
               >
-                CHAKRA
+                TRISHUL
               </span>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
@@ -403,17 +399,6 @@ export default function Layout() {
               Icon: Shield,
             }}
             items={BLUE_NAV}
-            pathname={location.pathname}
-            onNavigate={closeNav}
-          />
-          <NavGroup
-            team={{
-              color: "var(--c-purple)",
-              label: "PURPLE TEAM",
-              sub: "Correlation · Analysis",
-              Icon: Blend,
-            }}
-            items={PURPLE_NAV}
             pathname={location.pathname}
             onNavigate={closeNav}
           />
